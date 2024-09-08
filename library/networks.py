@@ -14,9 +14,11 @@ from common import (
 from tvm import relay
 import os
 
+from tvm.driver import tvmc
+
 def get_network_with_key(network_key):
-    name, args = network_key
-    args = args[0]
+    name = network_key['network']
+    args = network_key['batch_size']
 
     if name in [
         "resnet_18",
@@ -51,8 +53,7 @@ def get_network_with_key(network_key):
         elif name == "vgg_16":
             model = getattr(models, name.replace("_", ""))(pretrained=False)
 
-        # input_shape = args[0]
-        input_shape = args[0][0]
+        input_shape = args[0]
         dtype = "float32"
 
         input_data = torch.randn(input_shape).type(dtype2torch(dtype))
@@ -63,35 +64,52 @@ def get_network_with_key(network_key):
         mod, params = relay.frontend.from_pytorch(scripted_model, shape_list)
         mod = convert_to_nhwc(mod)
         inputs = [(input_name, input_shape, dtype)]
-    elif name in ["bert_squeeze"]:
-        os.environ["TOKENIZERS_PARALLELISM"] = "false"
+    elif name == "bert":
+        import gluonnlp
 
-        model = transformers.SqueezeBertForSequenceClassification.from_pretrained(
-            "squeezebert/squeezebert-uncased", return_dict=False
+        input_shape = args[0]
+        batch_size = input_shape[0]
+        seq_length = input_shape[1]
+
+        # Instantiate a BERT classifier using GluonNLP
+        model_name = "bert_12_768_12"
+        dataset = "book_corpus_wiki_en_uncased"
+        model, _ = gluonnlp.model.get_model(
+            name=model_name,
+            dataset_name=dataset,
+            pretrained=True,
+            use_pooler=True,
+            use_decoder=False,
+            use_classifier=False,
         )
 
-        # input_shape = args[0]
-        input_shape = args[0][0]
+        # Convert the MXNet model into TVM Relay format
+        shape_dict = {
+            "data0": (batch_size, seq_length),
+            "data1": (batch_size, seq_length),
+            "data2": (batch_size,),
+        }
+        mod, params = relay.frontend.from_mxnet(model, shape_dict)
+        input_shape = (shape_dict["data0"], shape_dict["data1"], shape_dict["data2"])
+        input_name = "input0"
+        dtype = 'int64'
 
-        input_shape = input_shape
-        input_name = "input_ids"
-        input_dtype = "int64"
-        A = torch.randint(10000, input_shape)
+        inputs = [(input_name, input_shape, dtype)]
 
-        model.eval()
-        scripted_model = torch.jit.trace(model, [A], strict=False)
-
-        input_name = "input_ids"
-        shape_list = [(input_name, input_shape)]
-        mod, params = relay.frontend.from_pytorch(scripted_model, shape_list)
-
-        mod = relay.transform.FastMath()(mod)
-        mod = relay.transform.CombineParallelBatchMatmul()(mod)
-
-        inputs = [(input_name, input_shape, input_dtype)]
+        mod = tvm.relay.transform.FastMath()(mod)
+        mod = tvm.relay.transform.EliminateCommonSubexpr()(mod)
+        BindPass = tvm.relay.transform.function_pass(
+            lambda fn, new_mod, ctx: tvm.relay.build_module.bind_params_by_name(
+                fn, params
+            ),
+            opt_level=1,
+        )
+        mod = BindPass(mod)
+        mod = tvm.relay.transform.FoldConstant()(mod)
+        mod = tvm.relay.transform.CombineParallelBatchMatmul()(mod)
+        mod = tvm.relay.transform.FoldConstant()(mod)
     elif name == "dcgan":
-        # output_shape = args[0]
-        output_shape = args[0][0]
+        output_shape = args[0]
         batch_size = output_shape[0]
         oshape = output_shape[1:]
         mod, params = relay.testing.dcgan.get_workload(
@@ -103,138 +121,81 @@ def get_network_with_key(network_key):
 
     return mod, params, inputs
 
-def get_network(network_args):
-    name, batch_size = network_args["network"], network_args["batch_size"]
-    if name in [
-        "resnet_18",
-        "resnet_50",
-        "mobilenet_v2",
-        "mobilenet_v3",
-        "wide_resnet_50",
-        "resnext_50",
-        "densenet_121",
-        "vgg_16",
-        "resnet3d_18",
-    ]:
-        network_key = (name, [(batch_size, 3, 224, 224)])
-    elif name in ["inception_v3"]:
-        network_key = (name, [(batch_size, 3, 299, 299)])
-    elif name in [
-        "bert_tiny",
-        "bert_base",
-        "bert_medium",
-        "bert_large",
-        "bert_squeeze",
-    ]:
-        network_key = (name, [(batch_size, 128)])
-    elif name == "dcgan":
-        network_key = (name, [(batch_size, 3, 64, 64)])
-    else:
-        raise ValueError("Invalid network: " + name)
-
-    return get_network_with_key(network_key)
-
-def build_network_pairs_keys():
-    network_keys = []
-
-    # resnext
-    batch_size = 1
-    image_size = 224
-    layer = 50
-
-    network_keys.append((f"resnext_{layer}", [(batch_size, 3, image_size, image_size)]))
-
-    # inception-v3
-    batch_size=1
-    image_size=299
-    network_keys.append(
-       (f"inception_v3", [(batch_size, 3, image_size, image_size)])
-    )
-
-    return network_keys
-
 def build_network_keys():
     network_keys = []
 
-    # resnext
-    for batch_size in [1]:
-        for image_size in [224, 240, 256]:
-            for layer in [50]:
-                network_keys.append(
-                    (f"resnext_{layer}", [(batch_size, 3, image_size, image_size)])
-                )
-
-    # inception-v3
-    for batch_size in [1, 2, 4]:
-        for image_size in [299]:
-            network_keys.append(
-                (f"inception_v3", [(batch_size, 3, image_size, image_size)])
-            )
-
-    # densenet
-    for batch_size in [1, 2, 4]:
-        for image_size in [224, 240, 256]:
-            network_keys.append(
-                (f"densenet_121", [(batch_size, 3, image_size, image_size)])
-            )
-
     # resnet_18 and resnet_50
-    for batch_size in [1, 4, 8]:
+    for batch_size in [1, 32, 64, 128]:
         for image_size in [224, 240, 256]:
             for layer in [18, 50]:
-                network_keys.append(
-                    (f"resnet_{layer}", [(batch_size, 3, image_size, image_size)])
-                )
+                network_keys.append((f'resnet_{layer}',
+                                    [(batch_size, 3, image_size, image_size)]))
 
     # mobilenet_v2
-    for batch_size in [1, 4, 8]:
+    for batch_size in [1, 32, 64, 128]:
         for image_size in [224, 240, 256]:
-            for name in ["mobilenet_v2", "mobilenet_v3"]:
-                network_keys.append(
-                    (f"{name}", [(batch_size, 3, image_size, image_size)])
-                )
-
-    # resnet3d
-    for batch_size in [1, 4, 8]:
-        for image_size in [112]:
-            for layer in [18]:
-                network_keys.append(
-                    (f"resnet3d_{layer}", [(batch_size, 3, image_size, image_size, 16)])
-                )
-
-    # bert
-    for batch_size in [1, 2, 4]:
-        for seq_length in [64, 128, 256]:
-            for scale in ["squeeze"]:
-                # for scale in ['tiny', 'base', 'medium', 'large']:
-                network_keys.append((f"bert_{scale}", [(batch_size, seq_length)]))
-
-    # dcgan
-    for batch_size in [1, 4, 8]:
-        for image_size in [64]:
-            network_keys.append((f"dcgan", [(batch_size, 3, image_size, image_size)]))
+            for name in ['mobilenet_v2', 'mobilenet_v3']:
+                network_keys.append((f'{name}',
+                                    [(batch_size, 3, image_size, image_size)]))
 
     # wide-resnet
-    for batch_size in [1, 4]:
+    for batch_size in [1, 32, 64, 128]:
         for image_size in [224, 240, 256]:
             for layer in [50]:
-                network_keys.append(
-                    (f"wide_resnet_{layer}", [(batch_size, 3, image_size, image_size)])
-                )
+                network_keys.append((f'wide_resnet_{layer}',
+                                    [(batch_size, 3, image_size, image_size)]))
+
+    # resnext
+    for batch_size in [1, 32, 64, 128]:
+        for image_size in [224, 240, 256]:
+            for layer in [50]:
+                network_keys.append((f'resnext_{layer}',
+                                    [(batch_size, 3, image_size, image_size)]))
+
+    # inception-v3
+    for batch_size in [1, 32, 64, 128]:
+        for image_size in [299]:
+            network_keys.append((f'inception_v3',
+                                [(batch_size, 3, image_size, image_size)]))
+
+    # densenet
+    for batch_size in [1, 32, 64, 128]:
+        for image_size in [224, 240, 256]:
+            network_keys.append((f'densenet_121',
+                                [(batch_size, 3, image_size, image_size)]))
+
+    # resnet3d
+    for batch_size in [1, 32, 64, 128]:
+        for image_size in [112, 128, 144]:
+            for layer in [18]:
+                network_keys.append((f'resnet3d_{layer}',
+                                    [(batch_size, 3, image_size, image_size, 16)]))
+
+    # bert
+    for batch_size in [1, 32, 64, 128]:
+        for seq_length in [64, 128, 256]:
+            network_keys.append((f'bert',
+                                [(batch_size, seq_length)]))
+
+
+    # dcgan
+    for batch_size in [1, 32, 64, 128]:
+        for image_size in [64]:
+            network_keys.append((f'dcgan',
+                                [(batch_size, 3, image_size, image_size)]))
 
     return network_keys
 
 def main():
-    for name in build_network_keys():
-        print(name)
-
     networks = build_network_keys()
 
     for arg in networks:
+        print(arg)
         network_arg = {
             "network": arg[0],
             "batch_size": arg[1],
         }
-        mod, params, inputs = get_network(network_arg)
+        mod, params, inputs = get_network_with_key(network_arg)
+        model = tvmc.TVMCModel(mod, params)
 
 main()
