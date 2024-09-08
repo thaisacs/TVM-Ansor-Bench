@@ -4,7 +4,7 @@ import torch
 import torchvision.models as models  # torchvision>=0.9.0
 import transformers  # pip3 install transformers==3.5 torch==1.7
 import tvm.relay.testing
-from common import (
+from library.common import (
     convert_to_nhwc,
     dtype2torch,
     NETWORK_INFO_FOLDER,
@@ -186,16 +186,3 @@ def build_network_keys():
 
     return network_keys
 
-def main():
-    networks = build_network_keys()
-
-    for arg in networks:
-        print(arg)
-        network_arg = {
-            "network": arg[0],
-            "batch_size": arg[1],
-        }
-        mod, params, inputs = get_network_with_key(network_arg)
-        model = tvmc.TVMCModel(mod, params)
-
-main()
