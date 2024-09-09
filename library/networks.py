@@ -16,9 +16,9 @@ import os
 
 from tvm.driver import tvmc
 
-def get_network_with_key(network_key):
+def get_network_with_key(network_key, dtype):
     name = network_key['network']
-    args = network_key['batch_size']
+    args = network_key['args']
 
     if name in [
         "resnet_18",
@@ -54,7 +54,6 @@ def get_network_with_key(network_key):
             model = getattr(models, name.replace("_", ""))(pretrained=False)
 
         input_shape = args[0]
-        dtype = "float32"
 
         input_data = torch.randn(input_shape).type(dtype2torch(dtype))
         scripted_model = torch.jit.trace(model, input_data).eval()
@@ -67,12 +66,12 @@ def get_network_with_key(network_key):
     elif name == "bert":
         import gluonnlp
 
-        input_shape = args[0]
-        batch_size = input_shape[0]
-        seq_length = input_shape[1]
+        input_info = args[0]
+        model_name = input_info[0]
+        batch_size = input_info[1]
+        seq_length = input_info[2]
 
         # Instantiate a BERT classifier using GluonNLP
-        model_name = "bert_12_768_12"
         dataset = "book_corpus_wiki_en_uncased"
         model, _ = gluonnlp.model.get_model(
             name=model_name,
@@ -92,7 +91,7 @@ def get_network_with_key(network_key):
         mod, params = relay.frontend.from_mxnet(model, shape_dict)
         input_shape = (shape_dict["data0"], shape_dict["data1"], shape_dict["data2"])
         input_name = "input0"
-        dtype = 'int64'
+        #dtype = 'int64'
 
         inputs = [(input_name, input_shape, dtype)]
 
@@ -115,7 +114,7 @@ def get_network_with_key(network_key):
         mod, params = relay.testing.dcgan.get_workload(
             batch_size=batch_size, oshape=oshape, layout="NHWC"
         )
-        inputs = [("data", (100,), "float32")]
+        inputs = [("data", (100,), dtype)]
     else:
         raise ValueError("Invalid name: " + name)
 
@@ -174,8 +173,9 @@ def build_network_keys():
     # bert
     for batch_size in [1, 32, 64, 128]:
         for seq_length in [64, 128, 256]:
-            network_keys.append((f'bert',
-                                [(batch_size, seq_length)]))
+            for name in ["bert_12_768_12", "bert_24_1024_16"]:
+                network_keys.append((f'bert',
+                                    [(name, batch_size, seq_length)]))
 
 
     # dcgan
