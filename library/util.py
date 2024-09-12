@@ -13,7 +13,7 @@ network_to_n_trials = {
     "resnext_50": 10000,
     "resnet3d_18": 10000,
     "inception_v3": 10000,
-    "densenet_121": 10000,
+    "densenet_121": 66000,
     "vgg_16": 10000,
     "bert": 10000,
     "dcgan": 10000,
