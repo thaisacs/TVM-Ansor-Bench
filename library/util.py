@@ -3,7 +3,7 @@
 network_to_n_trials = {
     "resnet_50": 22000,
     "resnet_18": 18000,
-    "mobilenet_v2": 10000,
+    "mobilenet_v2": 32000,
     "mobilenet_v3": 10000,
     "wide_resnet_50": 10000,
     "resnext_50": 10000,
@@ -13,9 +13,6 @@ network_to_n_trials = {
     "vgg_16": 10000,
     "bert": 10000,
     "dcgan": 10000,
-    #"mobilenet_v2": 16000,
-    #"inception_v3": 26000,
-    #"bert": 12000,
 }
 
 networks_dict = {
