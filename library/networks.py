@@ -123,17 +123,31 @@ def get_network_with_key(network_key, dtype):
 def build_network_keys():
     network_keys = []
 
-    # resnet_18 and resnet_50
+    # resnet_18
     for batch_size in [1, 16, 32, 64, 128]:
         for image_size in [224, 240, 256]:
-            for layer in [18, 50]:
+            for layer in [18]:
+                network_keys.append((f'resnet_{layer}',
+                                    [(batch_size, 3, image_size, image_size)]))
+
+    # resnet_50
+    for batch_size in [1, 16, 32, 64, 128]:
+        for image_size in [224, 240, 256]:
+            for layer in [50]:
                 network_keys.append((f'resnet_{layer}',
                                     [(batch_size, 3, image_size, image_size)]))
 
     # mobilenet_v2
     for batch_size in [1, 16, 32, 64, 128]:
         for image_size in [224, 240, 256]:
-            for name in ['mobilenet_v2', 'mobilenet_v3']:
+            for name in ['mobilenet_v2']:
+                network_keys.append((f'{name}',
+                                    [(batch_size, 3, image_size, image_size)]))
+
+    # mobilenet_v3
+    for batch_size in [1, 16, 32, 64, 128]:
+        for image_size in [224, 240, 256]:
+            for name in ['mobilenet_v3']:
                 network_keys.append((f'{name}',
                                     [(batch_size, 3, image_size, image_size)]))
 
@@ -170,13 +184,19 @@ def build_network_keys():
                 network_keys.append((f'resnet3d_{layer}',
                                     [(batch_size, 3, image_size, image_size, 16)]))
 
-    # bert
+    # bert 12
     for batch_size in [1, 16, 32, 64, 128]:
         for seq_length in [64, 128, 256]:
-            for name in ["bert_12_768_12", "bert_24_1024_16"]:
+            for name in ["bert_12_768_12"]:
                 network_keys.append((f'bert',
                                     [(name, batch_size, seq_length)]))
 
+    # bert 24
+    for batch_size in [1, 16, 32, 64, 128]:
+        for seq_length in [64, 128, 256]:
+            for name in ["bert_24_1024_16"]:
+                network_keys.append((f'bert',
+                                    [(name, batch_size, seq_length)]))
 
     # dcgan
     for batch_size in [1, 16, 32, 64, 128]:

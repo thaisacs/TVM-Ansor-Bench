@@ -92,7 +92,6 @@ if __name__ == "__main__":
             else:
                 shape_idx = 1
 
-        print(shape_idx)
         if(shape_idx == -1 or shape_idx == args.shape):
             network = arg[0]
             if(network in networks):
