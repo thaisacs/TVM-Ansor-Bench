@@ -124,54 +124,54 @@ def build_network_keys():
     network_keys = []
 
     # resnet_18 and resnet_50
-    for batch_size in [1, 32, 64, 128]:
+    for batch_size in [1, 16, 32, 64, 128]:
         for image_size in [224, 240, 256]:
             for layer in [18, 50]:
                 network_keys.append((f'resnet_{layer}',
                                     [(batch_size, 3, image_size, image_size)]))
 
     # mobilenet_v2
-    for batch_size in [1, 32, 64, 128]:
+    for batch_size in [1, 16, 32, 64, 128]:
         for image_size in [224, 240, 256]:
             for name in ['mobilenet_v2', 'mobilenet_v3']:
                 network_keys.append((f'{name}',
                                     [(batch_size, 3, image_size, image_size)]))
 
     # wide-resnet
-    for batch_size in [1, 32, 64, 128]:
+    for batch_size in [1, 16, 32, 64, 128]:
         for image_size in [224, 240, 256]:
             for layer in [50]:
                 network_keys.append((f'wide_resnet_{layer}',
                                     [(batch_size, 3, image_size, image_size)]))
 
     # resnext
-    for batch_size in [1, 32, 64, 128]:
+    for batch_size in [1, 16, 32, 64, 128]:
         for image_size in [224, 240, 256]:
             for layer in [50]:
                 network_keys.append((f'resnext_{layer}',
                                     [(batch_size, 3, image_size, image_size)]))
 
     # inception-v3
-    for batch_size in [1, 32, 64, 128]:
+    for batch_size in [1, 16, 32, 64, 128]:
         for image_size in [299]:
             network_keys.append((f'inception_v3',
                                 [(batch_size, 3, image_size, image_size)]))
 
     # densenet
-    for batch_size in [1, 32, 64, 128]:
+    for batch_size in [1, 16, 32, 64, 128]:
         for image_size in [224, 240, 256]:
             network_keys.append((f'densenet_121',
                                 [(batch_size, 3, image_size, image_size)]))
 
     # resnet3d
-    for batch_size in [1, 32, 64, 128]:
+    for batch_size in [1, 16, 32, 64, 128]:
         for image_size in [112, 128, 144]:
             for layer in [18]:
                 network_keys.append((f'resnet3d_{layer}',
                                     [(batch_size, 3, image_size, image_size, 16)]))
 
     # bert
-    for batch_size in [1, 32, 64, 128]:
+    for batch_size in [1, 16, 32, 64, 128]:
         for seq_length in [64, 128, 256]:
             for name in ["bert_12_768_12", "bert_24_1024_16"]:
                 network_keys.append((f'bert',
@@ -179,7 +179,7 @@ def build_network_keys():
 
 
     # dcgan
-    for batch_size in [1, 32, 64, 128]:
+    for batch_size in [1, 16, 32, 64, 128]:
         for image_size in [64]:
             network_keys.append((f'dcgan',
                                 [(batch_size, 3, image_size, image_size)]))

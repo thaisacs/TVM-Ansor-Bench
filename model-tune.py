@@ -69,30 +69,42 @@ if __name__ == "__main__":
     parser.add_argument(
         "--logdir", type=str, default="tmp_logs/", help="Log file directory."
     )
+    parser.add_argument("--shape", type=int, default=1, help="The input shape.")
     args = parser.parse_args()
 
     if args.network == "all":
         networks = networks_dict
+        shape_idx = -1
     else:
         networks = [args.network]
+        shape_idx = 1
+
     dtypes = [args.dtype]
 
     target = tvm.target.Target(args.target)
 
     networks_keys = build_network_keys()
 
-    for arg in networks_keys:
-        network = arg[0]
-        if(network in networks):
-            network_arg = {
-                "network": arg[0],
-                "args": arg[1],
-            }
-            print("Tune %s ..." % network_arg)
+    for arg_idx, arg in enumerate(networks_keys):
+        if(shape_idx != -1):
+            if(arg_idx > 0 and networks_keys[arg_idx-1][0] == arg[0]):
+                shape_idx += 1
+            else:
+                shape_idx = 1
 
-            log_file = os.path.join(
-                args.logdir, "autoscheduler", str(target.kind), str(network_arg) + ".json"
-            )
-            
-            auto_scheduler_tune(network_arg, args.dtype, target, log_file, args.tune)
+        print(shape_idx)
+        if(shape_idx == -1 or shape_idx == args.shape):
+            network = arg[0]
+            if(network in networks):
+                network_arg = {
+                    "network": arg[0],
+                    "args": arg[1],
+                }
+                print("Tune %s ..." % network_arg)
+
+                log_file = os.path.join(
+                    args.logdir, "autoscheduler", str(target.kind), str(network_arg) + ".json"
+                )
+                
+                auto_scheduler_tune(network_arg, args.dtype, target, log_file, args.tune)
 
