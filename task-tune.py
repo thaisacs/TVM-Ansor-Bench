@@ -14,7 +14,7 @@ from tvm import relay, auto_scheduler
 
 def auto_scheduler_tune(network_arg, dtype, target, tune):
     mod, params, inputs = get_network_with_key(network_arg, dtype)
-    n_trials = network_to_n_trials[network_arg['network']]
+    n_trials = 1500
 
     tasks, task_weights = auto_scheduler.extract_tasks(mod["main"], params, target)
     for idx, task in enumerate(tasks):
