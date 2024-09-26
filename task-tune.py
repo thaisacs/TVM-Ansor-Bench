@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import time
 
 from library.networks import get_network_with_key, build_network_keys
 from tvm.driver import tvmc
@@ -57,7 +58,10 @@ def auto_scheduler_tune(network_arg, dtype, target, tune):
                 )
 
             # Run auto-tuning (search)
+            start = time.time()
             task.tune(tuning_opt)
+            end = time.time()
+            print(str(task.workload_key), end - start)
 
 
 if __name__ == "__main__":
