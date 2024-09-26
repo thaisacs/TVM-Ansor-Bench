@@ -61,7 +61,7 @@ def auto_scheduler_tune(network_arg, dtype, target, tune):
             start = time.time()
             task.tune(tuning_opt)
             end = time.time()
-            print(str(task.workload_key), end - start)
+            print("task tune: ", str(task.workload_key), end - start)
 
 
 if __name__ == "__main__":
