@@ -26,11 +26,6 @@ def auto_scheduler_tune(network_arg, dtype, target, tune):
         print(task.compute_dag)
 
     if(tune):
-        #for task in tasks:
-        #    auto_scheduler.workload_registry.register_workload_tensors(
-        #        task.workload_key, task.compute_dag.tensors
-        #    )
-
         for task in tasks:
             log_file = os.path.join(
                 args.logdir, "autoscheduler", str(target.kind), str(network_arg) + str(task.workload_key) + ".json"
