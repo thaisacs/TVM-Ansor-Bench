@@ -32,11 +32,7 @@ def dump_to_file(search_space):
         shape = taskx[37:len(taskx)-1]
         h = taskx[2:34]
 
-        configs = []
-        for x in search_space[taskx]:
-            configs.append(str(x))
-        
-        data = [{'task_id': task_id, 'hash': h, 'shape': shape, 'configs': configs}]
+        data = {'id': task_id, 'hash': h, 'shape': shape, 'space': 'space'+str(task_id)+'.json'}
 
         with open('cachex'+str(task_id)+'.yml', 'w') as outfile:
             yaml.dump(data, outfile)
