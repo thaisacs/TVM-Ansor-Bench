@@ -8,6 +8,7 @@ import yaml
 # -----------------------------------------------------------------------------------
 
 def sort_array(arr):
+    return reversed(arr)
     for idx, result in enumerate(arr):
         key = sum(result['r'][0])/len(result['r'][0])
         j = idx - 1
@@ -21,7 +22,7 @@ def sort_array(arr):
 
 def sort_search_space(search_space):
     for hashx in search_space:
-        sort_array(search_space[hashx])
+        search_space[hashx] = sort_array(search_space[hashx])
 
 def dump_to_file(search_space):
     task_id = 0
@@ -32,7 +33,11 @@ def dump_to_file(search_space):
         shape = taskx[37:len(taskx)-1]
         h = taskx[2:34]
 
-        data = {'id': task_id, 'hash': h, 'shape': shape, 'space': 'space'+str(task_id)+'.json'}
+        configs = []
+        for x in search_space[taskx]:
+            configs.append(str(x))
+
+        data = {'id': task_id, 'hash': h, 'shape': shape, 'space': configs}
 
         with open('cachex'+str(task_id)+'.yml', 'w') as outfile:
             yaml.dump(data, outfile)
@@ -56,9 +61,15 @@ if __name__ == "__main__":
                             result = json.loads(l)
                             task = result['i'][0][0]
                             hashx = task
-                            if(hashx not in search_space):
-                                search_space[hashx] = []
-                            search_space[hashx].append(result)
+                            net = filename.split(" ")[1].replace(',', '')
+                            #if('densenet_121' == net.replace('\'', '') or 'inception_v3' == net.replace('\'', '')):
+                            #    print(net)
+                            if('resnet_18' == net.replace('\'', '') or 'resnet_50' == net.replace('\'', '')):
+                                print(net)
+                            else:
+                                if(hashx not in search_space):
+                                    search_space[hashx] = []
+                                search_space[hashx].append(result)
                         
     sort_search_space(search_space)
     dump_to_file(search_space)
