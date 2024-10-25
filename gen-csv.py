@@ -5,63 +5,84 @@ import json
 import numpy as np 
 import yaml
 import statistics 
+from scipy.stats import sem
 
 # -----------------------------------------------------------------------------------
 
-if __name__ == "__main__":
-    mypath = '/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/origin-results/output-densenet_121-O01'
-    filenames = next(walk(mypath), (None, None, []))[2]  # [] if no file
+def get_min(paths):
+    min_dic = {}
+    for dic in paths:
+        for path in dic['path']:
+            for (dir_path, dir_names, file_names) in walk(path):
+                count = 0
+                for filename in file_names:
+                    if("output" not in filename):
+                        count += 1
+                        with open(os.path.join(dir_path, filename), 'r') as f:
+                            for l in f:
+                                result = json.loads(l)
+                                task = result['i'][0][0]
+                                r = sum(result['r'][0])/len(result['r'][0])
+                                if(task not in min_dic):
+                                    min_dic[task] = r
+                                elif(min_dic[task] > r):
+                                    min_dic[task] = r
+    return min_dic
 
-    print('iteration,' + 'value,' + 'desvio_padrao')
+def gen_arr(paths, name, min_dict):
     arr = []
-    for (dir_path, dir_names, file_names) in walk(mypath):
-        count = 0
-        for filename in file_names:
-            if("output" not in filename):
-                count += 1
-                with open(os.path.join(dir_path, filename), 'r') as f:
-                    iteration = 0
-                    best = 100000
-                    values = []
-                    for l in f:
-                        if(iteration == 1000):
-                            break
-                        result = json.loads(l)
-                        task = result['i'][0][0]
-                        r = sum(result['r'][0])/len(result['r'][0])
-                        if(r < best):
-                            best = r
-                        if(best < 1000):
-                            values.append(best)
-                        iteration += 1
-
-                    if(len(values) == 1000):
-                        fmin = min(values)
-                        for idx, v in enumerate(values):
-                            values[idx] = values[idx] / fmin 
-
-                        arr.append(values)
-    #x = []
-    #y = []
-
-    #fmin = 100000
-    #for idx, v in enumerate(arr):
-    #    for n in v:
-    #        if(n < fmin):
-    #            fmin = n
-
-    #for idx, v in enumerate(arr):
-    #    for idy, n in enumerate(v):
-    #        arr[idx][idy] = n/fmin
-    
-    #for idx, v in enumerate(arr):
-    #    x.append(statistics.mean(arr[idx]))
-    #    y.append(statistics.stdev(arr[idx]))
-    #for idx, v in enumerate(x):
-    #    print(str(idx+1)+', '+str(v)+', '+str(y[idx]))
+    for path in paths:
+        for (dir_path, dir_names, file_names) in walk(path):
+            count = 0
+            for filename in file_names:
+                if("output" not in filename):
+                    count += 1
+                    with open(os.path.join(dir_path, filename), 'r') as f:
+                        iteration = 0
+                        best = 100000
+                        _sum = 0
+                        values = []
+                        for l in f:
+                            if(iteration == 1000):
+                                break
+                            result = json.loads(l)
+                            task = result['i'][0][0]
+                            r = sum(result['r'][0])/len(result['r'][0])
+                            if(r < best):
+                                best = r
+                            #if(best < 10000):
+                            #    values.append(best)
+                            if(best < 1000):
+                                #fmin = min_dict[task]
+                                #_sum += r / fmin
+                                values.append(best)
+                            iteration += 1
+                            
+                        if(len(values) >= 1000):
+                            #fmin = min(values)
+                            fmin = min_dict[task]
+                            for idx, v in enumerate(values):
+                                values[idx] = values[idx] / fmin 
+                            arr.append(values[:1000])
 
     for idx in range(0, 1000):
         l = []
         for v in arr:
             l.append(v[idx])
-        print(str(idx+1)+', '+str(statistics.geometric_mean(l)))
+        print(str(idx)+','+str(statistics.mean(l))+','+str(sem(l))+','+name)
+
+if __name__ == "__main__":
+    paths = [
+    {'path': ['/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/origin-results/output-resnet18-O01',
+              '/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/origin-results/output-resnet50-O01'], 'name': 'origin'},
+    {'path': ['/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/myversion-results/output-resnet18-M01-1500',
+              '/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/myversion-results/output-resnet50-M01-1500'], 'name': 'cache'},
+    {'path': ['/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/myversion-results/output-resnet18-M01-1000-sort',
+              '/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/myversion-results/output-resnet50-M01-1000'], 'name': 'cache-sort'}
+    ]
+
+    min_dict = get_min(paths)
+
+    print('iteration,' + 'value,' + 'desvio,' + 'tipo')
+    for x in paths:
+        gen_arr(x['path'], x['name'], min_dict)

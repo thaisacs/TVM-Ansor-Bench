@@ -8,7 +8,7 @@ import yaml
 # -----------------------------------------------------------------------------------
 
 def sort_array(arr):
-    return reversed(arr)
+    #return reversed(arr)
     for idx, result in enumerate(arr):
         key = sum(result['r'][0])/len(result['r'][0])
         j = idx - 1
