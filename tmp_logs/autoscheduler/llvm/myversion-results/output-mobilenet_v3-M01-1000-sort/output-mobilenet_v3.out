@@ -1,0 +1,2957 @@
+=======================
+#hash 88a2e34d300a6ccfcf0228f0b90f13ec 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1735	fail_ct: 0	Time elapsed: 5.93
+real cache size after init: 1735
+=======================
+GA Iter: 0	Max score: 0.9995	Min score: 0.9152	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9872	#Pop: 128	#M+: 1377	#M-: 42
+EvolutionarySearch		#s: 128	Time elapsed: 28.60
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************Tune {'network': 'mobilenet_v3', 'args': [(1, 3, 224, 224)]} ...
+========== Task 0  (workload key: ["88a2e34d300a6ccfcf0228f0b90f13ec", [1, 56, 56, 72], [5, 5, 72, 1], [1, 1, 1, 72], [1, 28, 28, 72]]) ==========
+p0 = PLACEHOLDER [1, 56, 56, 72]
+PaddedInput(i0, i1, i2, i3) = tir.if_then_else(((((i1 >= 2) && (i1 < 58)) && (i2 >= 2)) && (i2 < 58)), p0[i0, (i1 - 2), (i2 - 2), i3], 0f)
+p1 = PLACEHOLDER [5, 5, 72, 1]
+DepthwiseConv2d(b, i, j, c) += (PaddedInput[b, ((i*2) + di), ((j*2) + dj), c]*p1[di, dj, c, 0])
+p2 = PLACEHOLDER [1, 1, 1, 72]
+T_add(ax0, ax1, ax2, ax3) = (DepthwiseConv2d[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+T_relu(ax0, ax1, ax2, ax3) = max(T_add[ax0, ax1, ax2, ax3], 0f)
+
+========== Task 1  (workload key: ["cb7a0e9e733d26ffc00e7f6c9cc0f879", [1, 56, 56, 64], [1, 1, 64, 24], [1, 1, 1, 24], [1, 56, 56, 24]]) ==========
+p0 = PLACEHOLDER [1, 56, 56, 64]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 64, 24]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 24]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+
+========== Task 2  (workload key: ["8b290ca0f393be6ffa536c91e9bafd22", [1, 7, 7, 160], [1, 1, 160, 960], [1, 1, 1, 960], [1, 7, 7, 960]]) ==========
+p0 = PLACEHOLDER [1, 7, 7, 160]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 160, 960]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 960]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+compile_engine_const() = 3f
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + compile_engine_const[])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+T_multiply(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3]*T_divide[ax0, ax1, ax2, ax3])
+
+========== Task 3  (workload key: ["c4a40b16179bb6885ba76d9e196a3add", [1, 14, 14, 200], [3, 3, 200, 1], [1, 1, 1, 200], [1, 14, 14, 200]]) ==========
+p0 = PLACEHOLDER [1, 14, 14, 200]
+PaddedInput(i0, i1, i2, i3) = tir.if_then_else(((((i1 >= 1) && (i1 < 15)) && (i2 >= 1)) && (i2 < 15)), p0[i0, (i1 - 1), (i2 - 1), i3], 0f)
+p1 = PLACEHOLDER [3, 3, 200, 1]
+DepthwiseConv2d(b, i, j, c) += (PaddedInput[b, (i + di), (j + dj), c]*p1[di, dj, c, 0])
+p2 = PLACEHOLDER [1, 1, 1, 200]
+T_add(ax0, ax1, ax2, ax3) = (DepthwiseConv2d[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+compile_engine_const() = 3f
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + compile_engine_const[])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+T_multiply(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3]*T_divide[ax0, ax1, ax2, ax3])
+
+========== Task 4  (workload key: ["a070f950f4133385b987011e4f61e368", [1, 224, 224, 3], [3, 3, 3, 16], [1, 1, 1, 16], [1, 112, 112, 16]]) ==========
+p0 = PLACEHOLDER [1, 224, 224, 3]
+pad_temp(i0, i1, i2, i3) = tir.if_then_else(((((i1 >= 1) && (i1 < 225)) && (i2 >= 1)) && (i2 < 225)), p0[i0, (i1 - 1), (i2 - 1), i3], 0f)
+p1 = PLACEHOLDER [3, 3, 3, 16]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, ((yy*2) + ry), ((xx*2) + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 16]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+compile_engine_const() = 3f
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + compile_engine_const[])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+T_multiply(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3]*T_divide[ax0, ax1, ax2, ax3])
+
+========== Task 5  (workload key: ["72ca68bb11bee9ca8a1f020c65fe14b9", [1, 14, 14, 200], [1, 1, 200, 80], [1, 1, 1, 80], [1, 14, 14, 80], [1, 14, 14, 80]]) ==========
+p0 = PLACEHOLDER [1, 14, 14, 200]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 200, 80]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 80]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+p3 = PLACEHOLDER [1, 14, 14, 80]
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + p3[ax0, ax1, ax2, ax3])
+
+========== Task 6  (workload key: ["71674820f9879a3e56274f61dbea193b", [1, 1, 1, 24], [1, 1, 24, 72], [1, 1, 1, 72], [1, 1, 1, 72]]) ==========
+p0 = PLACEHOLDER [1, 1, 1, 24]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 24, 72]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 72]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, ax1, ax2, ax3])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+
+========== Task 7  (workload key: ["6d628209072e3e3dd8f49359935acea6", [1, 112, 112, 16], [1, 1, 16, 64], [1, 1, 1, 64], [1, 112, 112, 64]]) ==========
+p0 = PLACEHOLDER [1, 112, 112, 16]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 16, 64]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 64]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+T_relu(ax0, ax1, ax2, ax3) = max(T_add[ax0, ax1, ax2, ax3], 0f)
+
+========== Task 8  (workload key: ["08f7449d79e570b7274174709e5e5e01", [1, 960], [1280, 960], [1, 1280], [1, 1280]]) ==========
+p0 = PLACEHOLDER [1, 960]
+p1 = PLACEHOLDER [1280, 960]
+T_matmul_NT(i0, i1) += (p0[i0, k]*p1[i1, k])
+p2 = PLACEHOLDER [1, 1280]
+T_add(ax0, ax1) = (T_matmul_NT[ax0, ax1] + p2[ax0, ax1])
+
+========== Task 9  (workload key: ["c4a40b16179bb6885ba76d9e196a3add", [1, 14, 14, 672], [3, 3, 672, 1], [1, 1, 1, 672], [1, 14, 14, 672]]) ==========
+p0 = PLACEHOLDER [1, 14, 14, 672]
+PaddedInput(i0, i1, i2, i3) = tir.if_then_else(((((i1 >= 1) && (i1 < 15)) && (i2 >= 1)) && (i2 < 15)), p0[i0, (i1 - 1), (i2 - 1), i3], 0f)
+p1 = PLACEHOLDER [3, 3, 672, 1]
+DepthwiseConv2d(b, i, j, c) += (PaddedInput[b, (i + di), (j + dj), c]*p1[di, dj, c, 0])
+p2 = PLACEHOLDER [1, 1, 1, 672]
+T_add(ax0, ax1, ax2, ax3) = (DepthwiseConv2d[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+compile_engine_const() = 3f
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + compile_engine_const[])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+T_multiply(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3]*T_divide[ax0, ax1, ax2, ax3])
+
+========== Task 10  (workload key: ["cb7a0e9e733d26ffc00e7f6c9cc0f879", [1, 14, 14, 480], [1, 1, 480, 112], [1, 1, 1, 112], [1, 14, 14, 112]]) ==========
+p0 = PLACEHOLDER [1, 14, 14, 480]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 480, 112]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 112]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+
+========== Task 11  (workload key: ["98cde4888c94ec7beaa9972f806856d0", [1, 28, 28, 120], [5, 5, 120, 1], [1, 1, 1, 120], [1, 28, 28, 120]]) ==========
+p0 = PLACEHOLDER [1, 28, 28, 120]
+PaddedInput(i0, i1, i2, i3) = tir.if_then_else(((((i1 >= 2) && (i1 < 30)) && (i2 >= 2)) && (i2 < 30)), p0[i0, (i1 - 2), (i2 - 2), i3], 0f)
+p1 = PLACEHOLDER [5, 5, 120, 1]
+DepthwiseConv2d(b, i, j, c) += (PaddedInput[b, (i + di), (j + dj), c]*p1[di, dj, c, 0])
+p2 = PLACEHOLDER [1, 1, 1, 120]
+T_add(ax0, ax1, ax2, ax3) = (DepthwiseConv2d[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+T_relu(ax0, ax1, ax2, ax3) = max(T_add[ax0, ax1, ax2, ax3], 0f)
+
+========== Task 12  (workload key: ["71674820f9879a3e56274f61dbea193b", [1, 1, 1, 168], [1, 1, 168, 672], [1, 1, 1, 672], [1, 1, 1, 672]]) ==========
+p0 = PLACEHOLDER [1, 1, 1, 168]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 168, 672]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 672]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, ax1, ax2, ax3])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+
+========== Task 13  (workload key: ["8b290ca0f393be6ffa536c91e9bafd22", [1, 14, 14, 112], [1, 1, 112, 672], [1, 1, 1, 672], [1, 14, 14, 672]]) ==========
+p0 = PLACEHOLDER [1, 14, 14, 112]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 112, 672]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 672]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+compile_engine_const() = 3f
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + compile_engine_const[])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+T_multiply(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3]*T_divide[ax0, ax1, ax2, ax3])
+
+========== Task 14  (workload key: ["3d479ed97ca20d2da8a12f3813e5f1c3", [1, 14, 14, 480], [1, 1, 1, 480]]) ==========
+p0 = PLACEHOLDER [1, 14, 14, 480]
+adaptive_pool_sum(ax0, ax1, ax2, ax3) += p0[ax0, ((ax1*14) + rv0), ((ax2*14) + rv1), ax3]
+adaptive_pool_avg(ax0, ax1, ax2, ax3) = (adaptive_pool_sum[ax0, ax1, ax2, ax3]/(float32((select((bool)1, ((ax1 + 1)*14), (((ax1 + 1)*14) + 1)) - (ax1*14)))*float32((select((bool)1, ((ax2 + 1)*14), (((ax2 + 1)*14) + 1)) - (ax2*14)))))
+
+========== Task 15  (workload key: ["8b290ca0f393be6ffa536c91e9bafd22", [1, 14, 14, 80], [1, 1, 80, 184], [1, 1, 1, 184], [1, 14, 14, 184]]) ==========
+p0 = PLACEHOLDER [1, 14, 14, 80]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 80, 184]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 184]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+compile_engine_const() = 3f
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + compile_engine_const[])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+T_multiply(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3]*T_divide[ax0, ax1, ax2, ax3])
+
+========== Task 16  (workload key: ["98cde4888c94ec7beaa9972f806856d0", [1, 56, 56, 72], [3, 3, 72, 1], [1, 1, 1, 72], [1, 56, 56, 72]]) ==========
+p0 = PLACEHOLDER [1, 56, 56, 72]
+PaddedInput(i0, i1, i2, i3) = tir.if_then_else(((((i1 >= 1) && (i1 < 57)) && (i2 >= 1)) && (i2 < 57)), p0[i0, (i1 - 1), (i2 - 1), i3], 0f)
+p1 = PLACEHOLDER [3, 3, 72, 1]
+DepthwiseConv2d(b, i, j, c) += (PaddedInput[b, (i + di), (j + dj), c]*p1[di, dj, c, 0])
+p2 = PLACEHOLDER [1, 1, 1, 72]
+T_add(ax0, ax1, ax2, ax3) = (DepthwiseConv2d[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+T_relu(ax0, ax1, ax2, ax3) = max(T_add[ax0, ax1, ax2, ax3], 0f)
+
+========== Task 17  (workload key: ["71674820f9879a3e56274f61dbea193b", [1, 1, 1, 32], [1, 1, 32, 120], [1, 1, 1, 120], [1, 1, 1, 120]]) ==========
+p0 = PLACEHOLDER [1, 1, 1, 32]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 32, 120]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 120]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, ax1, ax2, ax3])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+
+========== Task 18  (workload key: ["72ca68bb11bee9ca8a1f020c65fe14b9", [1, 56, 56, 72], [1, 1, 72, 24], [1, 1, 1, 24], [1, 56, 56, 24], [1, 56, 56, 24]]) ==========
+p0 = PLACEHOLDER [1, 56, 56, 72]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 72, 24]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 24]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+p3 = PLACEHOLDER [1, 56, 56, 24]
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + p3[ax0, ax1, ax2, ax3])
+
+========== Task 19  (workload key: ["8b290ca0f393be6ffa536c91e9bafd22", [1, 28, 28, 40], [1, 1, 40, 240], [1, 1, 1, 240], [1, 28, 28, 240]]) ==========
+p0 = PLACEHOLDER [1, 28, 28, 40]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 40, 240]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 240]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+compile_engine_const() = 3f
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + compile_engine_const[])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+T_multiply(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3]*T_divide[ax0, ax1, ax2, ax3])
+
+========== Task 20  (workload key: ["3d479ed97ca20d2da8a12f3813e5f1c3", [1, 14, 14, 672], [1, 1, 1, 672]]) ==========
+p0 = PLACEHOLDER [1, 14, 14, 672]
+adaptive_pool_sum(ax0, ax1, ax2, ax3) += p0[ax0, ((ax1*14) + rv0), ((ax2*14) + rv1), ax3]
+adaptive_pool_avg(ax0, ax1, ax2, ax3) = (adaptive_pool_sum[ax0, ax1, ax2, ax3]/(float32((select((bool)1, ((ax1 + 1)*14), (((ax1 + 1)*14) + 1)) - (ax1*14)))*float32((select((bool)1, ((ax2 + 1)*14), (((ax2 + 1)*14) + 1)) - (ax2*14)))))
+
+========== Task 21  (workload key: ["72ca68bb11bee9ca8a1f020c65fe14b9", [1, 14, 14, 672], [1, 1, 672, 112], [1, 1, 1, 112], [1, 14, 14, 112], [1, 14, 14, 112]]) ==========
+p0 = PLACEHOLDER [1, 14, 14, 672]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 672, 112]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 112]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+p3 = PLACEHOLDER [1, 14, 14, 112]
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + p3[ax0, ax1, ax2, ax3])
+
+========== Task 22  (workload key: ["cb7a0e9e733d26ffc00e7f6c9cc0f879", [1, 14, 14, 240], [1, 1, 240, 80], [1, 1, 1, 80], [1, 14, 14, 80]]) ==========
+p0 = PLACEHOLDER [1, 14, 14, 240]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 240, 80]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 80]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+
+========== Task 23  (workload key: ["c4a40b16179bb6885ba76d9e196a3add", [1, 7, 7, 960], [5, 5, 960, 1], [1, 1, 1, 960], [1, 7, 7, 960]]) ==========
+p0 = PLACEHOLDER [1, 7, 7, 960]
+PaddedInput(i0, i1, i2, i3) = tir.if_then_else(((((i1 >= 2) && (i1 < 9)) && (i2 >= 2)) && (i2 < 9)), p0[i0, (i1 - 2), (i2 - 2), i3], 0f)
+p1 = PLACEHOLDER [5, 5, 960, 1]
+DepthwiseConv2d(b, i, j, c) += (PaddedInput[b, (i + di), (j + dj), c]*p1[di, dj, c, 0])
+p2 = PLACEHOLDER [1, 1, 1, 960]
+T_add(ax0, ax1, ax2, ax3) = (DepthwiseConv2d[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+compile_engine_const() = 3f
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + compile_engine_const[])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+T_multiply(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3]*T_divide[ax0, ax1, ax2, ax3])
+
+========== Task 24  (workload key: ["6d628209072e3e3dd8f49359935acea6", [1, 28, 28, 40], [1, 1, 40, 120], [1, 1, 1, 120], [1, 28, 28, 120]]) ==========
+p0 = PLACEHOLDER [1, 28, 28, 40]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 40, 120]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 120]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+T_relu(ax0, ax1, ax2, ax3) = max(T_add[ax0, ax1, ax2, ax3], 0f)
+
+========== Task 25  (workload key: ["98cde4888c94ec7beaa9972f806856d0", [1, 112, 112, 16], [3, 3, 16, 1], [1, 1, 1, 16], [1, 112, 112, 16]]) ==========
+p0 = PLACEHOLDER [1, 112, 112, 16]
+PaddedInput(i0, i1, i2, i3) = tir.if_then_else(((((i1 >= 1) && (i1 < 113)) && (i2 >= 1)) && (i2 < 113)), p0[i0, (i1 - 1), (i2 - 1), i3], 0f)
+p1 = PLACEHOLDER [3, 3, 16, 1]
+DepthwiseConv2d(b, i, j, c) += (PaddedInput[b, (i + di), (j + dj), c]*p1[di, dj, c, 0])
+p2 = PLACEHOLDER [1, 1, 1, 16]
+T_add(ax0, ax1, ax2, ax3) = (DepthwiseConv2d[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+T_relu(ax0, ax1, ax2, ax3) = max(T_add[ax0, ax1, ax2, ax3], 0f)
+
+========== Task 26  (workload key: ["72ca68bb11bee9ca8a1f020c65fe14b9", [1, 112, 112, 16], [1, 1, 16, 16], [1, 1, 1, 16], [1, 112, 112, 16], [1, 112, 112, 16]]) ==========
+p0 = PLACEHOLDER [1, 112, 112, 16]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 16, 16]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 16]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+p3 = PLACEHOLDER [1, 112, 112, 16]
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + p3[ax0, ax1, ax2, ax3])
+
+========== Task 27  (workload key: ["f5b447dcba2b43cc270d7c2062043946", [1, 1, 1, 480], [1, 1, 480, 120], [1, 1, 1, 120], [1, 1, 1, 120]]) ==========
+p0 = PLACEHOLDER [1, 1, 1, 480]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 480, 120]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 120]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, ax1, ax2, ax3])
+T_relu(ax0, ax1, ax2, ax3) = max(T_add[ax0, ax1, ax2, ax3], 0f)
+
+========== Task 28  (workload key: ["c4a40b16179bb6885ba76d9e196a3add", [1, 14, 14, 184], [3, 3, 184, 1], [1, 1, 1, 184], [1, 14, 14, 184]]) ==========
+p0 = PLACEHOLDER [1, 14, 14, 184]
+PaddedInput(i0, i1, i2, i3) = tir.if_then_else(((((i1 >= 1) && (i1 < 15)) && (i2 >= 1)) && (i2 < 15)), p0[i0, (i1 - 1), (i2 - 1), i3], 0f)
+p1 = PLACEHOLDER [3, 3, 184, 1]
+DepthwiseConv2d(b, i, j, c) += (PaddedInput[b, (i + di), (j + dj), c]*p1[di, dj, c, 0])
+p2 = PLACEHOLDER [1, 1, 1, 184]
+T_add(ax0, ax1, ax2, ax3) = (DepthwiseConv2d[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+compile_engine_const() = 3f
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + compile_engine_const[])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+T_multiply(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3]*T_divide[ax0, ax1, ax2, ax3])
+
+========== Task 29  (workload key: ["72ca68bb11bee9ca8a1f020c65fe14b9", [1, 14, 14, 184], [1, 1, 184, 80], [1, 1, 1, 80], [1, 14, 14, 80], [1, 14, 14, 80]]) ==========
+p0 = PLACEHOLDER [1, 14, 14, 184]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 184, 80]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 80]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+p3 = PLACEHOLDER [1, 14, 14, 80]
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + p3[ax0, ax1, ax2, ax3])
+
+========== Task 30  (workload key: ["6d628209072e3e3dd8f49359935acea6", [1, 56, 56, 24], [1, 1, 24, 72], [1, 1, 1, 72], [1, 56, 56, 72]]) ==========
+p0 = PLACEHOLDER [1, 56, 56, 24]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 24, 72]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 72]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+T_relu(ax0, ax1, ax2, ax3) = max(T_add[ax0, ax1, ax2, ax3], 0f)
+
+========== Task 31  (workload key: ["5584e4d68b3c2f6c78f7c8f4ae91f643", [1, 28, 28, 240], [3, 3, 240, 1], [1, 1, 1, 240], [1, 14, 14, 240]]) ==========
+p0 = PLACEHOLDER [1, 28, 28, 240]
+PaddedInput(i0, i1, i2, i3) = tir.if_then_else(((((i1 >= 1) && (i1 < 29)) && (i2 >= 1)) && (i2 < 29)), p0[i0, (i1 - 1), (i2 - 1), i3], 0f)
+p1 = PLACEHOLDER [3, 3, 240, 1]
+DepthwiseConv2d(b, i, j, c) += (PaddedInput[b, ((i*2) + di), ((j*2) + dj), c]*p1[di, dj, c, 0])
+p2 = PLACEHOLDER [1, 1, 1, 240]
+T_add(ax0, ax1, ax2, ax3) = (DepthwiseConv2d[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+compile_engine_const() = 3f
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + compile_engine_const[])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+T_multiply(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3]*T_divide[ax0, ax1, ax2, ax3])
+
+========== Task 32  (workload key: ["8c53ca2904398da2889aa7508082d7bb", [1, 7, 7, 672], [1, 1, 1, 672]]) ==========
+p0 = PLACEHOLDER [1, 7, 7, 672]
+adaptive_pool_sum(ax0, ax1, ax2, ax3) += p0[ax0, ((ax1*7) + rv0), ((ax2*7) + rv1), ax3]
+adaptive_pool_avg(ax0, ax1, ax2, ax3) = (adaptive_pool_sum[ax0, ax1, ax2, ax3]/(float32((select((bool)1, ((ax1 + 1)*7), (((ax1 + 1)*7) + 1)) - (ax1*7)))*float32((select((bool)1, ((ax2 + 1)*7), (((ax2 + 1)*7) + 1)) - (ax2*7)))))
+
+========== Task 33  (workload key: ["5584e4d68b3c2f6c78f7c8f4ae91f643", [1, 14, 14, 672], [5, 5, 672, 1], [1, 1, 1, 672], [1, 7, 7, 672]]) ==========
+p0 = PLACEHOLDER [1, 14, 14, 672]
+PaddedInput(i0, i1, i2, i3) = tir.if_then_else(((((i1 >= 2) && (i1 < 16)) && (i2 >= 2)) && (i2 < 16)), p0[i0, (i1 - 2), (i2 - 2), i3], 0f)
+p1 = PLACEHOLDER [5, 5, 672, 1]
+DepthwiseConv2d(b, i, j, c) += (PaddedInput[b, ((i*2) + di), ((j*2) + dj), c]*p1[di, dj, c, 0])
+p2 = PLACEHOLDER [1, 1, 1, 672]
+T_add(ax0, ax1, ax2, ax3) = (DepthwiseConv2d[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+compile_engine_const() = 3f
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + compile_engine_const[])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+T_multiply(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3]*T_divide[ax0, ax1, ax2, ax3])
+
+========== Task 34  (workload key: ["72ca68bb11bee9ca8a1f020c65fe14b9", [1, 28, 28, 120], [1, 1, 120, 40], [1, 1, 1, 40], [1, 28, 28, 40], [1, 28, 28, 40]]) ==========
+p0 = PLACEHOLDER [1, 28, 28, 120]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 120, 40]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 40]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+p3 = PLACEHOLDER [1, 28, 28, 40]
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + p3[ax0, ax1, ax2, ax3])
+
+========== Task 35  (workload key: ["5f606dbf52f21fe707e2db850ef12471", [1, 28, 28, 72], [1, 1, 1, 72]]) ==========
+p0 = PLACEHOLDER [1, 28, 28, 72]
+adaptive_pool_sum(ax0, ax1, ax2, ax3) += p0[ax0, ((ax1*28) + rv0), ((ax2*28) + rv1), ax3]
+adaptive_pool_avg(ax0, ax1, ax2, ax3) = (adaptive_pool_sum[ax0, ax1, ax2, ax3]/(float32((select((bool)1, ((ax1 + 1)*28), (((ax1 + 1)*28) + 1)) - (ax1*28)))*float32((select((bool)1, ((ax2 + 1)*28), (((ax2 + 1)*28) + 1)) - (ax2*28)))))
+
+========== Task 36  (workload key: ["72ca68bb11bee9ca8a1f020c65fe14b9", [1, 7, 7, 960], [1, 1, 960, 160], [1, 1, 1, 160], [1, 7, 7, 160], [1, 7, 7, 160]]) ==========
+p0 = PLACEHOLDER [1, 7, 7, 960]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 960, 160]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 160]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+p3 = PLACEHOLDER [1, 7, 7, 160]
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + p3[ax0, ax1, ax2, ax3])
+
+========== Task 37  (workload key: ["f5b447dcba2b43cc270d7c2062043946", [1, 1, 1, 672], [1, 1, 672, 168], [1, 1, 1, 168], [1, 1, 1, 168]]) ==========
+p0 = PLACEHOLDER [1, 1, 1, 672]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 672, 168]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 168]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, ax1, ax2, ax3])
+T_relu(ax0, ax1, ax2, ax3) = max(T_add[ax0, ax1, ax2, ax3], 0f)
+
+========== Task 38  (workload key: ["71674820f9879a3e56274f61dbea193b", [1, 1, 1, 240], [1, 1, 240, 960], [1, 1, 1, 960], [1, 1, 1, 960]]) ==========
+p0 = PLACEHOLDER [1, 1, 1, 240]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 240, 960]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 960]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, ax1, ax2, ax3])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+
+========== Task 39  (workload key: ["cb7a0e9e733d26ffc00e7f6c9cc0f879", [1, 28, 28, 72], [1, 1, 72, 40], [1, 1, 1, 40], [1, 28, 28, 40]]) ==========
+p0 = PLACEHOLDER [1, 28, 28, 72]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 72, 40]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 40]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+
+========== Task 40  (workload key: ["08f7449d79e570b7274174709e5e5e01", [1, 1280], [1000, 1280], [1, 1000], [1, 1000]]) ==========
+p0 = PLACEHOLDER [1, 1280]
+p1 = PLACEHOLDER [1000, 1280]
+T_matmul_NT(i0, i1) += (p0[i0, k]*p1[i1, k])
+p2 = PLACEHOLDER [1, 1000]
+T_add(ax0, ax1) = (T_matmul_NT[ax0, ax1] + p2[ax0, ax1])
+
+========== Task 41  (workload key: ["f5b447dcba2b43cc270d7c2062043946", [1, 1, 1, 72], [1, 1, 72, 24], [1, 1, 1, 24], [1, 1, 1, 24]]) ==========
+p0 = PLACEHOLDER [1, 1, 1, 72]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 72, 24]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 24]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, ax1, ax2, ax3])
+T_relu(ax0, ax1, ax2, ax3) = max(T_add[ax0, ax1, ax2, ax3], 0f)
+
+========== Task 42  (workload key: ["8b290ca0f393be6ffa536c91e9bafd22", [1, 14, 14, 80], [1, 1, 80, 480], [1, 1, 1, 480], [1, 14, 14, 480]]) ==========
+p0 = PLACEHOLDER [1, 14, 14, 80]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 80, 480]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 480]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+compile_engine_const() = 3f
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + compile_engine_const[])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+T_multiply(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3]*T_divide[ax0, ax1, ax2, ax3])
+
+========== Task 43  (workload key: ["71674820f9879a3e56274f61dbea193b", [1, 1, 1, 120], [1, 1, 120, 480], [1, 1, 1, 480], [1, 1, 1, 480]]) ==========
+p0 = PLACEHOLDER [1, 1, 1, 120]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 120, 480]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 480]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, ax1, ax2, ax3])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+
+========== Task 44  (workload key: ["8b290ca0f393be6ffa536c91e9bafd22", [1, 14, 14, 80], [1, 1, 80, 200], [1, 1, 1, 200], [1, 14, 14, 200]]) ==========
+p0 = PLACEHOLDER [1, 14, 14, 80]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 80, 200]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 200]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+compile_engine_const() = 3f
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + compile_engine_const[])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+T_multiply(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3]*T_divide[ax0, ax1, ax2, ax3])
+
+========== Task 45  (workload key: ["88a2e34d300a6ccfcf0228f0b90f13ec", [1, 112, 112, 64], [3, 3, 64, 1], [1, 1, 1, 64], [1, 56, 56, 64]]) ==========
+p0 = PLACEHOLDER [1, 112, 112, 64]
+PaddedInput(i0, i1, i2, i3) = tir.if_then_else(((((i1 >= 1) && (i1 < 113)) && (i2 >= 1)) && (i2 < 113)), p0[i0, (i1 - 1), (i2 - 1), i3], 0f)
+p1 = PLACEHOLDER [3, 3, 64, 1]
+DepthwiseConv2d(b, i, j, c) += (PaddedInput[b, ((i*2) + di), ((j*2) + dj), c]*p1[di, dj, c, 0])
+p2 = PLACEHOLDER [1, 1, 1, 64]
+T_add(ax0, ax1, ax2, ax3) = (DepthwiseConv2d[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+T_relu(ax0, ax1, ax2, ax3) = max(T_add[ax0, ax1, ax2, ax3], 0f)
+
+========== Task 46  (workload key: ["8c53ca2904398da2889aa7508082d7bb", [1, 7, 7, 960], [1, 1, 1, 960]]) ==========
+p0 = PLACEHOLDER [1, 7, 7, 960]
+adaptive_pool_sum(ax0, ax1, ax2, ax3) += p0[ax0, ((ax1*7) + rv0), ((ax2*7) + rv1), ax3]
+adaptive_pool_avg(ax0, ax1, ax2, ax3) = (adaptive_pool_sum[ax0, ax1, ax2, ax3]/(float32((select((bool)1, ((ax1 + 1)*7), (((ax1 + 1)*7) + 1)) - (ax1*7)))*float32((select((bool)1, ((ax2 + 1)*7), (((ax2 + 1)*7) + 1)) - (ax2*7)))))
+
+========== Task 47  (workload key: ["cb7a0e9e733d26ffc00e7f6c9cc0f879", [1, 7, 7, 672], [1, 1, 672, 160], [1, 1, 1, 160], [1, 7, 7, 160]]) ==========
+p0 = PLACEHOLDER [1, 7, 7, 672]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 672, 160]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 160]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+
+========== Task 48  (workload key: ["5f606dbf52f21fe707e2db850ef12471", [1, 28, 28, 120], [1, 1, 1, 120]]) ==========
+p0 = PLACEHOLDER [1, 28, 28, 120]
+adaptive_pool_sum(ax0, ax1, ax2, ax3) += p0[ax0, ((ax1*28) + rv0), ((ax2*28) + rv1), ax3]
+adaptive_pool_avg(ax0, ax1, ax2, ax3) = (adaptive_pool_sum[ax0, ax1, ax2, ax3]/(float32((select((bool)1, ((ax1 + 1)*28), (((ax1 + 1)*28) + 1)) - (ax1*28)))*float32((select((bool)1, ((ax2 + 1)*28), (((ax2 + 1)*28) + 1)) - (ax2*28)))))
+
+========== Task 49  (workload key: ["f5b447dcba2b43cc270d7c2062043946", [1, 1, 1, 120], [1, 1, 120, 32], [1, 1, 1, 32], [1, 1, 1, 32]]) ==========
+p0 = PLACEHOLDER [1, 1, 1, 120]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 120, 32]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 32]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, ax1, ax2, ax3])
+T_relu(ax0, ax1, ax2, ax3) = max(T_add[ax0, ax1, ax2, ax3], 0f)
+
+========== Task 50  (workload key: ["f5b447dcba2b43cc270d7c2062043946", [1, 1, 1, 960], [1, 1, 960, 240], [1, 1, 1, 240], [1, 1, 1, 240]]) ==========
+p0 = PLACEHOLDER [1, 1, 1, 960]
+pad_temp(i0, i1, i2, i3) = p0[i0, i1, i2, i3]
+p1 = PLACEHOLDER [1, 1, 960, 240]
+conv2d_nhwc(nn, yy, xx, ff) += (pad_temp[nn, (yy + ry), (xx + rx), rc]*p1[ry, rx, rc, ff])
+p2 = PLACEHOLDER [1, 1, 1, 240]
+T_add(ax0, ax1, ax2, ax3) = (conv2d_nhwc[ax0, ax1, ax2, ax3] + p2[ax0, ax1, ax2, ax3])
+T_relu(ax0, ax1, ax2, ax3) = max(T_add[ax0, ax1, ax2, ax3], 0f)
+
+========== Task 51  (workload key: ["c4a40b16179bb6885ba76d9e196a3add", [1, 14, 14, 480], [3, 3, 480, 1], [1, 1, 1, 480], [1, 14, 14, 480]]) ==========
+p0 = PLACEHOLDER [1, 14, 14, 480]
+PaddedInput(i0, i1, i2, i3) = tir.if_then_else(((((i1 >= 1) && (i1 < 15)) && (i2 >= 1)) && (i2 < 15)), p0[i0, (i1 - 1), (i2 - 1), i3], 0f)
+p1 = PLACEHOLDER [3, 3, 480, 1]
+DepthwiseConv2d(b, i, j, c) += (PaddedInput[b, (i + di), (j + dj), c]*p1[di, dj, c, 0])
+p2 = PLACEHOLDER [1, 1, 1, 480]
+T_add(ax0, ax1, ax2, ax3) = (DepthwiseConv2d[ax0, ax1, ax2, ax3] + p2[ax0, 0, 0, ax3])
+compile_engine_const() = 3f
+T_add(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3] + compile_engine_const[])
+compute(i0, i1, i2, i3) = max(min(T_add[i0, i1, i2, i3], 6f), 0f)
+compile_engine_const() = 6f
+T_divide(ax0, ax1, ax2, ax3) = (compute[ax0, ax1, ax2, ax3]/compile_engine_const[])
+T_multiply(ax0, ax1, ax2, ax3) = (T_add[ax0, ax1, ax2, ax3]*T_divide[ax0, ax1, ax2, ax3])
+
+
+Time elapsed for measurement: 23.45 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.59 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1727	fail_ct: 0	Time elapsed: 5.89
+real cache size after init: 1727
+=======================
+GA Iter: 0	Max score: 0.9997	Min score: 0.9283	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9862	#Pop: 128	#M+: 1386	#M-: 41
+EvolutionarySearch		#s: 128	Time elapsed: 28.17
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 23.24 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash cb7a0e9e733d26ffc00e7f6c9cc0f879 1
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 2500
+real cache size after init: 2500
+=======================
+GA Iter: 0	Max score: 0.9997	Min score: 0.9449	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9873	#Pop: 128	#M+: 1399	#M-: 80
+EvolutionarySearch		#s: 128	Time elapsed: 17.95
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["88a2e34d300a6ccfcf0228f0b90f13ec", [1, 56, 56, 72], [5, 5, 72, 1], [1, 1, 1, 72], [1, 28, 28, 72]] 152.24964308738708
+
+Time elapsed for measurement: 17.39 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.16 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 2500
+real cache size after init: 2500
+=======================
+GA Iter: 0	Max score: 0.9994	Min score: 0.9396	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9997	Min score: 0.9875	#Pop: 128	#M+: 1377	#M-: 70
+EvolutionarySearch		#s: 128	Time elapsed: 18.03
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 19.15 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 8b290ca0f393be6ffa536c91e9bafd22 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1979	fail_ct: 11	Time elapsed: 3.74
+real cache size after init: 1979
+=======================
+GA Iter: 0	Max score: 0.9995	Min score: 0.9325	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9861	#Pop: 128	#M+: 1375	#M-: 75
+EvolutionarySearch		#s: 128	Time elapsed: 15.84
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["cb7a0e9e733d26ffc00e7f6c9cc0f879", [1, 56, 56, 64], [1, 1, 64, 24], [1, 1, 1, 24], [1, 56, 56, 24]] 97.60763573646545
+
+Time elapsed for measurement: 21.47 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.16 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1964	fail_ct: 5	Time elapsed: 3.71
+real cache size after init: 1964
+=======================
+GA Iter: 0	Max score: 0.9992	Min score: 0.9373	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9847	#Pop: 128	#M+: 1376	#M-: 74
+EvolutionarySearch		#s: 128	Time elapsed: 16.20
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 17.14 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash c4a40b16179bb6885ba76d9e196a3add 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1655	fail_ct: 1	Time elapsed: 5.96
+real cache size after init: 1655
+=======================
+GA Iter: 0	Max score: 0.9999	Min score: 0.9197	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9850	#Pop: 128	#M+: 1397	#M-: 32
+EvolutionarySearch		#s: 128	Time elapsed: 28.51
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+...............................................................task tune:  ["8b290ca0f393be6ffa536c91e9bafd22", [1, 7, 7, 160], [1, 1, 160, 960], [1, 1, 1, 960], [1, 7, 7, 960]] 102.27920126914978
+.T***************************************************************
+Time elapsed for measurement: 33.20 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.22 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1690	fail_ct: 0	Time elapsed: 6.04
+real cache size after init: 1690
+=======================
+GA Iter: 0	Max score: 0.9998	Min score: 0.9126	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9871	#Pop: 128	#M+: 1383	#M-: 45
+EvolutionarySearch		#s: 128	Time elapsed: 28.78
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 31.01 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash a070f950f4133385b987011e4f61e368 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1807	fail_ct: 0	Time elapsed: 6.88
+real cache size after init: 1807
+=======================
+GA Iter: 0	Max score: 0.9983	Min score: 0.9398	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9878	#Pop: 128	#M+: 1387	#M-: 41
+EvolutionarySearch		#s: 128	Time elapsed: 32.20
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["c4a40b16179bb6885ba76d9e196a3add", [1, 14, 14, 200], [3, 3, 200, 1], [1, 1, 1, 200], [1, 14, 14, 200]] 157.61386036872864
+
+Time elapsed for measurement: 26.17 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.22 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1847	fail_ct: 0	Time elapsed: 7.06
+real cache size after init: 1847
+=======================
+GA Iter: 0	Max score: 0.9998	Min score: 0.9381	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9870	#Pop: 128	#M+: 1392	#M-: 34
+EvolutionarySearch		#s: 128	Time elapsed: 32.55
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................T***************************************************************
+Time elapsed for measurement: 33.89 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 72ca68bb11bee9ca8a1f020c65fe14b9 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1986	fail_ct: 1	Time elapsed: 3.31
+real cache size after init: 1986
+=======================
+GA Iter: 0	Max score: 0.9996	Min score: 0.9355	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9858	#Pop: 128	#M+: 1374	#M-: 75
+EvolutionarySearch		#s: 128	Time elapsed: 14.44
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["a070f950f4133385b987011e4f61e368", [1, 224, 224, 3], [3, 3, 3, 16], [1, 1, 1, 16], [1, 112, 112, 16]] 163.24120092391968
+
+Time elapsed for measurement: 23.81 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.14 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1977	fail_ct: 4	Time elapsed: 3.35
+real cache size after init: 1977
+=======================
+GA Iter: 0	Max score: 0.9997	Min score: 0.9343	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9896	#Pop: 128	#M+: 1385	#M-: 76
+EvolutionarySearch		#s: 128	Time elapsed: 14.77
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 16.79 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 71674820f9879a3e56274f61dbea193b 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1523	fail_ct: 300	Time elapsed: 2.44
+real cache size after init: 1523
+=======================
+GA Iter: 0	Max score: 0.9999	Min score: 0.9108	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9858	#Pop: 128	#M+: 1382	#M-: 77
+EvolutionarySearch		#s: 128	Time elapsed: 10.43
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["72ca68bb11bee9ca8a1f020c65fe14b9", [1, 14, 14, 200], [1, 1, 200, 80], [1, 1, 1, 80], [1, 14, 14, 80], [1, 14, 14, 80]] 100.7584719657898
+
+Time elapsed for measurement: 20.61 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.12 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1498	fail_ct: 309	Time elapsed: 2.42
+real cache size after init: 1498
+=======================
+GA Iter: 0	Max score: 0.9991	Min score: 0.9156	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9872	#Pop: 128	#M+: 1381	#M-: 73
+EvolutionarySearch		#s: 128	Time elapsed: 10.38
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 16.49 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 6d628209072e3e3dd8f49359935acea6 90
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 2430
+real cache size after init: 2430
+=======================
+GA Iter: 0	Max score: 1.0000	Min score: 0.9413	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9886	#Pop: 128	#M+: 1377	#M-: 70
+EvolutionarySearch		#s: 128	Time elapsed: 18.50
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["71674820f9879a3e56274f61dbea193b", [1, 1, 1, 24], [1, 1, 24, 72], [1, 1, 1, 72], [1, 1, 1, 72]] 87.01999282836914
+
+Time elapsed for measurement: 24.98 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.15 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 2430
+real cache size after init: 2430
+=======================
+GA Iter: 0	Max score: 0.9994	Min score: 0.9406	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9997	Min score: 0.9870	#Pop: 128	#M+: 1385	#M-: 80
+EvolutionarySearch		#s: 128	Time elapsed: 18.56
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 19.91 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 08f7449d79e570b7274174709e5e5e01 4
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 2500
+real cache size after init: 2500
+=======================
+GA Iter: 0	Max score: 1.0000	Min score: 0.9587	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9889	#Pop: 128	#M+: 1385	#M-: 71
+EvolutionarySearch		#s: 128	Time elapsed: 8.77
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.Etask tune:  ["6d628209072e3e3dd8f49359935acea6", [1, 112, 112, 16], [1, 1, 16, 64], [1, 1, 1, 64], [1, 112, 112, 64]] 125.14828062057495
+
+Time elapsed for measurement: 16.43 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.09 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 2500
+real cache size after init: 2500
+=======================
+GA Iter: 0	Max score: 0.9999	Min score: 0.9446	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9879	#Pop: 128	#M+: 1395	#M-: 78
+EvolutionarySearch		#s: 128	Time elapsed: 8.80
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E
+Time elapsed for measurement: 12.84 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+No valid state found in this search round. Check if it has traversed all of the search space.
+=======================
+#hash c4a40b16179bb6885ba76d9e196a3add 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1683	fail_ct: 0	Time elapsed: 6.18
+real cache size after init: 1683
+=======================
+GA Iter: 0	Max score: 0.9993	Min score: 0.9211	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9855	#Pop: 128	#M+: 1390	#M-: 41
+EvolutionarySearch		#s: 128	Time elapsed: 29.37
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["08f7449d79e570b7274174709e5e5e01", [1, 960], [1280, 960], [1, 1280], [1, 1280]] 71.97991371154785
+
+Time elapsed for measurement: 28.50 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.20 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1708	fail_ct: 1	Time elapsed: 6.24
+real cache size after init: 1708
+=======================
+GA Iter: 0	Max score: 0.9998	Min score: 0.9121	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9856	#Pop: 128	#M+: 1393	#M-: 35
+EvolutionarySearch		#s: 128	Time elapsed: 29.41
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 32.57 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash cb7a0e9e733d26ffc00e7f6c9cc0f879 1
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 2500
+real cache size after init: 2500
+=======================
+GA Iter: 0	Max score: 0.9999	Min score: 0.9536	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9882	#Pop: 128	#M+: 1376	#M-: 74
+EvolutionarySearch		#s: 128	Time elapsed: 19.87
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["c4a40b16179bb6885ba76d9e196a3add", [1, 14, 14, 672], [3, 3, 672, 1], [1, 1, 1, 672], [1, 14, 14, 672]] 156.68092274665833
+
+Time elapsed for measurement: 21.30 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.17 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 2500
+real cache size after init: 2500
+=======================
+GA Iter: 0	Max score: 0.9997	Min score: 0.9487	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9875	#Pop: 128	#M+: 1394	#M-: 73
+EvolutionarySearch		#s: 128	Time elapsed: 19.92
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 16.62 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 98cde4888c94ec7beaa9972f806856d0 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1756	fail_ct: 0	Time elapsed: 5.94
+real cache size after init: 1756
+=======================
+GA Iter: 0	Max score: 0.9988	Min score: 0.9103	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9881	#Pop: 128	#M+: 1391	#M-: 40
+EvolutionarySearch		#s: 128	Time elapsed: 27.98
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["cb7a0e9e733d26ffc00e7f6c9cc0f879", [1, 14, 14, 480], [1, 1, 480, 112], [1, 1, 1, 112], [1, 14, 14, 112]] 102.62938570976257
+
+Time elapsed for measurement: 33.28 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.22 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1764	fail_ct: 0	Time elapsed: 5.97
+real cache size after init: 1764
+=======================
+GA Iter: 0	Max score: 0.9994	Min score: 0.9216	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9850	#Pop: 128	#M+: 1389	#M-: 35
+EvolutionarySearch		#s: 128	Time elapsed: 28.30
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 36.22 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 71674820f9879a3e56274f61dbea193b 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1824	fail_ct: 71	Time elapsed: 2.57
+real cache size after init: 1824
+=======================
+GA Iter: 0	Max score: 0.9995	Min score: 0.9342	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9996	Min score: 0.9854	#Pop: 128	#M+: 1382	#M-: 68
+EvolutionarySearch		#s: 128	Time elapsed: 11.09
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["98cde4888c94ec7beaa9972f806856d0", [1, 28, 28, 120], [5, 5, 120, 1], [1, 1, 1, 120], [1, 28, 28, 120]] 162.02437949180603
+
+Time elapsed for measurement: 23.50 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.13 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1818	fail_ct: 74	Time elapsed: 2.58
+real cache size after init: 1818
+=======================
+GA Iter: 0	Max score: 0.9975	Min score: 0.9327	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9870	#Pop: 128	#M+: 1384	#M-: 71
+EvolutionarySearch		#s: 128	Time elapsed: 11.14
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 17.10 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 8b290ca0f393be6ffa536c91e9bafd22 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 2008	fail_ct: 0	Time elapsed: 4.10
+real cache size after init: 2008
+=======================
+GA Iter: 0	Max score: 0.9998	Min score: 0.9397	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9998	Min score: 0.9873	#Pop: 128	#M+: 1396	#M-: 69
+EvolutionarySearch		#s: 128	Time elapsed: 17.62
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["71674820f9879a3e56274f61dbea193b", [1, 1, 1, 168], [1, 1, 168, 672], [1, 1, 1, 672], [1, 1, 1, 672]] 92.08850836753845
+
+Time elapsed for measurement: 25.15 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.16 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1991	fail_ct: 0	Time elapsed: 4.07
+real cache size after init: 1991
+=======================
+GA Iter: 0	Max score: 0.9999	Min score: 0.9465	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9877	#Pop: 128	#M+: 1385	#M-: 83
+EvolutionarySearch		#s: 128	Time elapsed: 17.83
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 21.20 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 3d479ed97ca20d2da8a12f3813e5f1c3 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 1
+=======================
+real cache size: 0
+Sample Iter: 5	#Pop: 8	#Target: 50	fail_ct: 7658	Time elapsed: 5.34
+#Target has been reduced to 25 due to too many failures or duplications
+Sample Iter: 10	#Pop: 8	#Target: 25	fail_ct: 15376	Time elapsed: 10.71
+#Target has been reduced to 12 due to too many failures or duplications
+Sample Iter: 15	#Pop: 8	#Target: 12	fail_ct: 23008	Time elapsed: 16.05
+#Target has been reduced to 6 due to too many failures or duplications
+Sample Initial Population	#s: 8	fail_ct: 24533	Time elapsed: 17.13
+real cache size after init: 8
+=======================
+GA Iter: 0	Max score: 0.8389	Min score: 0.1210	#Pop: 8	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9820	Min score: 0.0093	#Pop: 24	#M+: 347	#M-: 7017
+EvolutionarySearch		#s: 24	Time elapsed: 4.35
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 24 programs to measure:
+........................************************task tune:  ["8b290ca0f393be6ffa536c91e9bafd22", [1, 14, 14, 112], [1, 1, 112, 672], [1, 1, 1, 672], [1, 14, 14, 672]] 114.17481064796448
+
+Time elapsed for measurement: 13.53 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.07 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 8	fail_ct: 1512	Time elapsed: 1.07
+real cache size after init: 8
+=======================
+GA Iter: 0	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 0	#M-: 0
+GA Iter: 4	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 399	#M-: 6688
+EvolutionarySearch		#s: 0	Time elapsed: 4.38
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 8	fail_ct: 1501	Time elapsed: 1.06
+real cache size after init: 8
+=======================
+GA Iter: 0	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 0	#M-: 0
+GA Iter: 4	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 377	#M-: 6680
+EvolutionarySearch		#s: 0	Time elapsed: 4.41
+It seems all candidates in the search space have been measured.
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+No valid state found in this search round. Check if it has traversed all of the search space.
+=======================
+#hash 8b290ca0f393be6ffa536c91e9bafd22 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1952	fail_ct: 5	Time elapsed: 3.91
+real cache size after init: 1952
+=======================
+GA Iter: 0	Max score: 0.9997	Min score: 0.9394	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9868	#Pop: 128	#M+: 1393	#M-: 78
+EvolutionarySearch		#s: 128	Time elapsed: 16.73
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["3d479ed97ca20d2da8a12f3813e5f1c3", [1, 14, 14, 480], [1, 1, 1, 480]] 69.9008104801178
+
+Time elapsed for measurement: 23.80 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.17 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1947	fail_ct: 8	Time elapsed: 3.88
+real cache size after init: 1947
+=======================
+GA Iter: 0	Max score: 0.9997	Min score: 0.9361	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9858	#Pop: 128	#M+: 1374	#M-: 79
+EvolutionarySearch		#s: 128	Time elapsed: 17.05
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 19.52 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 98cde4888c94ec7beaa9972f806856d0 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1774	fail_ct: 0	Time elapsed: 6.19
+real cache size after init: 1774
+=======================
+GA Iter: 0	Max score: 0.9993	Min score: 0.9268	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9854	#Pop: 128	#M+: 1391	#M-: 43
+EvolutionarySearch		#s: 128	Time elapsed: 28.82
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["8b290ca0f393be6ffa536c91e9bafd22", [1, 14, 14, 80], [1, 1, 80, 184], [1, 1, 1, 184], [1, 14, 14, 184]] 109.33459663391113
+
+Time elapsed for measurement: 33.93 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.22 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1750	fail_ct: 0	Time elapsed: 6.12
+real cache size after init: 1750
+=======================
+GA Iter: 0	Max score: 0.9992	Min score: 0.9194	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9998	Min score: 0.9864	#Pop: 128	#M+: 1395	#M-: 39
+EvolutionarySearch		#s: 128	Time elapsed: 29.03
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 26.66 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 71674820f9879a3e56274f61dbea193b 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1528	fail_ct: 299	Time elapsed: 2.46
+real cache size after init: 1528
+=======================
+GA Iter: 0	Max score: 0.9990	Min score: 0.9239	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9870	#Pop: 128	#M+: 1390	#M-: 77
+EvolutionarySearch		#s: 128	Time elapsed: 10.42
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["98cde4888c94ec7beaa9972f806856d0", [1, 56, 56, 72], [3, 3, 72, 1], [1, 1, 1, 72], [1, 56, 56, 72]] 155.2579152584076
+
+Time elapsed for measurement: 21.16 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.11 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1534	fail_ct: 308	Time elapsed: 2.46
+real cache size after init: 1534
+=======================
+GA Iter: 0	Max score: 0.9982	Min score: 0.8998	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9848	#Pop: 128	#M+: 1373	#M-: 74
+EvolutionarySearch		#s: 128	Time elapsed: 10.61
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 17.21 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 72ca68bb11bee9ca8a1f020c65fe14b9 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 2008	fail_ct: 0	Time elapsed: 3.66
+real cache size after init: 2008
+=======================
+GA Iter: 0	Max score: 1.0000	Min score: 0.9421	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9884	#Pop: 128	#M+: 1378	#M-: 69
+EvolutionarySearch		#s: 128	Time elapsed: 15.93
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["71674820f9879a3e56274f61dbea193b", [1, 1, 1, 32], [1, 1, 32, 120], [1, 1, 1, 120], [1, 1, 1, 120]] 88.46460390090942
+
+Time elapsed for measurement: 24.10 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.14 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 2009	fail_ct: 1	Time elapsed: 3.70
+real cache size after init: 2009
+=======================
+GA Iter: 0	Max score: 0.9998	Min score: 0.9371	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9891	#Pop: 128	#M+: 1391	#M-: 74
+EvolutionarySearch		#s: 128	Time elapsed: 16.22
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 22.02 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 8b290ca0f393be6ffa536c91e9bafd22 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 2015	fail_ct: 0	Time elapsed: 4.39
+real cache size after init: 2015
+=======================
+GA Iter: 0	Max score: 0.9996	Min score: 0.9314	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9996	Min score: 0.9862	#Pop: 128	#M+: 1388	#M-: 71
+EvolutionarySearch		#s: 128	Time elapsed: 18.85
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["72ca68bb11bee9ca8a1f020c65fe14b9", [1, 56, 56, 72], [1, 1, 72, 24], [1, 1, 1, 24], [1, 56, 56, 24], [1, 56, 56, 24]] 109.89904189109802
+
+Time elapsed for measurement: 30.44 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.16 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 2013	fail_ct: 0	Time elapsed: 4.38
+real cache size after init: 2013
+=======================
+GA Iter: 0	Max score: 0.9991	Min score: 0.9141	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9856	#Pop: 128	#M+: 1370	#M-: 71
+EvolutionarySearch		#s: 128	Time elapsed: 19.17
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 35.23 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 3d479ed97ca20d2da8a12f3813e5f1c3 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 1
+=======================
+real cache size: 0
+Sample Iter: 5	#Pop: 8	#Target: 50	fail_ct: 7661	Time elapsed: 5.34
+#Target has been reduced to 25 due to too many failures or duplications
+Sample Iter: 10	#Pop: 8	#Target: 25	fail_ct: 15237	Time elapsed: 10.70
+#Target has been reduced to 12 due to too many failures or duplications
+Sample Iter: 15	#Pop: 8	#Target: 12	fail_ct: 22912	Time elapsed: 16.05
+#Target has been reduced to 6 due to too many failures or duplications
+Sample Initial Population	#s: 8	fail_ct: 24467	Time elapsed: 17.15
+real cache size after init: 8
+=======================
+GA Iter: 0	Max score: 0.7533	Min score: 0.0195	#Pop: 8	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9980	Min score: 0.0195	#Pop: 24	#M+: 354	#M-: 6832
+EvolutionarySearch		#s: 24	Time elapsed: 4.40
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 24 programs to measure:
+........................************************task tune:  ["8b290ca0f393be6ffa536c91e9bafd22", [1, 28, 28, 40], [1, 1, 40, 240], [1, 1, 1, 240], [1, 28, 28, 240]] 136.7782847881317
+
+Time elapsed for measurement: 8.16 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.07 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 8	fail_ct: 1549	Time elapsed: 1.09
+real cache size after init: 8
+=======================
+GA Iter: 0	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 0	#M-: 0
+GA Iter: 4	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 425	#M-: 6394
+EvolutionarySearch		#s: 0	Time elapsed: 4.30
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 8	fail_ct: 1532	Time elapsed: 1.07
+real cache size after init: 8
+=======================
+GA Iter: 0	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 0	#M-: 0
+GA Iter: 4	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 417	#M-: 6498
+EvolutionarySearch		#s: 0	Time elapsed: 4.37
+It seems all candidates in the search space have been measured.
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+No valid state found in this search round. Check if it has traversed all of the search space.
+=======================
+#hash 72ca68bb11bee9ca8a1f020c65fe14b9 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1970	fail_ct: 2	Time elapsed: 3.34
+real cache size after init: 1970
+=======================
+GA Iter: 0	Max score: 1.0000	Min score: 0.9394	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9863	#Pop: 128	#M+: 1385	#M-: 76
+EvolutionarySearch		#s: 128	Time elapsed: 14.64
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["3d479ed97ca20d2da8a12f3813e5f1c3", [1, 14, 14, 672], [1, 1, 1, 672]] 64.57847356796265
+
+Time elapsed for measurement: 23.57 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.16 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1983	fail_ct: 1	Time elapsed: 3.34
+real cache size after init: 1983
+=======================
+GA Iter: 0	Max score: 0.9981	Min score: 0.9344	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9880	#Pop: 128	#M+: 1386	#M-: 75
+EvolutionarySearch		#s: 128	Time elapsed: 14.80
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 19.24 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash cb7a0e9e733d26ffc00e7f6c9cc0f879 1
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 2500
+real cache size after init: 2500
+=======================
+GA Iter: 0	Max score: 0.9997	Min score: 0.9480	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9892	#Pop: 128	#M+: 1372	#M-: 68
+EvolutionarySearch		#s: 128	Time elapsed: 19.97
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["72ca68bb11bee9ca8a1f020c65fe14b9", [1, 14, 14, 672], [1, 1, 672, 112], [1, 1, 1, 112], [1, 14, 14, 112], [1, 14, 14, 112]] 103.33431911468506
+
+Time elapsed for measurement: 20.65 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.16 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 2500
+real cache size after init: 2500
+=======================
+GA Iter: 0	Max score: 0.9994	Min score: 0.9514	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9998	Min score: 0.9876	#Pop: 128	#M+: 1383	#M-: 71
+EvolutionarySearch		#s: 128	Time elapsed: 20.05
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 16.49 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash c4a40b16179bb6885ba76d9e196a3add 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1592	fail_ct: 0	Time elapsed: 5.39
+real cache size after init: 1592
+=======================
+GA Iter: 0	Max score: 0.9994	Min score: 0.9228	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9996	Min score: 0.9881	#Pop: 128	#M+: 1390	#M-: 39
+EvolutionarySearch		#s: 128	Time elapsed: 25.96
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["cb7a0e9e733d26ffc00e7f6c9cc0f879", [1, 14, 14, 240], [1, 1, 240, 80], [1, 1, 1, 80], [1, 14, 14, 80]] 102.04552912712097
+
+Time elapsed for measurement: 23.89 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.20 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1596	fail_ct: 1	Time elapsed: 5.43
+real cache size after init: 1596
+=======================
+GA Iter: 0	Max score: 0.9997	Min score: 0.9199	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9864	#Pop: 128	#M+: 1386	#M-: 45
+EvolutionarySearch		#s: 128	Time elapsed: 26.46
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 31.77 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 6d628209072e3e3dd8f49359935acea6 90
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 2430
+real cache size after init: 2430
+=======================
+GA Iter: 0	Max score: 0.9998	Min score: 0.9376	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9867	#Pop: 128	#M+: 1382	#M-: 72
+EvolutionarySearch		#s: 128	Time elapsed: 19.31
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["c4a40b16179bb6885ba76d9e196a3add", [1, 7, 7, 960], [5, 5, 960, 1], [1, 1, 1, 960], [1, 7, 7, 960]] 143.14000034332275
+
+Time elapsed for measurement: 22.72 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.18 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 2430
+real cache size after init: 2430
+=======================
+GA Iter: 0	Max score: 1.0000	Min score: 0.9387	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9887	#Pop: 128	#M+: 1385	#M-: 70
+EvolutionarySearch		#s: 128	Time elapsed: 19.58
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 16.59 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 98cde4888c94ec7beaa9972f806856d0 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1781	fail_ct: 0	Time elapsed: 6.25
+real cache size after init: 1781
+=======================
+GA Iter: 0	Max score: 0.9999	Min score: 0.9324	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9869	#Pop: 128	#M+: 1387	#M-: 35
+EvolutionarySearch		#s: 128	Time elapsed: 29.37
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+.............................................................task tune:  ["6d628209072e3e3dd8f49359935acea6", [1, 28, 28, 40], [1, 1, 40, 120], [1, 1, 1, 120], [1, 28, 28, 120]] 120.39814591407776
+.T.T.T*************************************************************
+Time elapsed for measurement: 36.48 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.22 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1808	fail_ct: 0	Time elapsed: 6.25
+real cache size after init: 1808
+=======================
+GA Iter: 0	Max score: 0.9989	Min score: 0.9325	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9869	#Pop: 128	#M+: 1392	#M-: 44
+EvolutionarySearch		#s: 128	Time elapsed: 29.55
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................T***************************************************************
+Time elapsed for measurement: 33.78 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 72ca68bb11bee9ca8a1f020c65fe14b9 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 2015	fail_ct: 0	Time elapsed: 3.73
+real cache size after init: 2015
+=======================
+GA Iter: 0	Max score: 0.9998	Min score: 0.9404	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9998	Min score: 0.9864	#Pop: 128	#M+: 1377	#M-: 75
+EvolutionarySearch		#s: 128	Time elapsed: 16.42
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["98cde4888c94ec7beaa9972f806856d0", [1, 112, 112, 16], [3, 3, 16, 1], [1, 1, 1, 16], [1, 112, 112, 16]] 166.14653372764587
+
+Time elapsed for measurement: 23.73 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.15 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 2029	fail_ct: 0	Time elapsed: 3.77
+real cache size after init: 2029
+=======================
+GA Iter: 0	Max score: 1.0000	Min score: 0.9318	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9866	#Pop: 128	#M+: 1378	#M-: 68
+EvolutionarySearch		#s: 128	Time elapsed: 16.38
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 22.08 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash f5b447dcba2b43cc270d7c2062043946 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 5
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1510	fail_ct: 203	Time elapsed: 2.20
+real cache size after init: 1510
+=======================
+GA Iter: 0	Max score: 0.9995	Min score: 0.9099	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9995	Min score: 0.9863	#Pop: 128	#M+: 1378	#M-: 80
+EvolutionarySearch		#s: 128	Time elapsed: 9.84
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["72ca68bb11bee9ca8a1f020c65fe14b9", [1, 112, 112, 16], [1, 1, 16, 16], [1, 1, 1, 16], [1, 112, 112, 16], [1, 112, 112, 16]] 110.33357906341553
+
+Time elapsed for measurement: 20.39 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.12 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1503	fail_ct: 193	Time elapsed: 2.20
+real cache size after init: 1503
+=======================
+GA Iter: 0	Max score: 0.9995	Min score: 0.9215	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9998	Min score: 0.9887	#Pop: 128	#M+: 1375	#M-: 72
+EvolutionarySearch		#s: 128	Time elapsed: 9.97
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 16.56 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash c4a40b16179bb6885ba76d9e196a3add 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1647	fail_ct: 1	Time elapsed: 5.89
+real cache size after init: 1647
+=======================
+GA Iter: 0	Max score: 0.9992	Min score: 0.9255	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9853	#Pop: 128	#M+: 1380	#M-: 41
+EvolutionarySearch		#s: 128	Time elapsed: 28.49
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["f5b447dcba2b43cc270d7c2062043946", [1, 1, 1, 480], [1, 1, 480, 120], [1, 1, 1, 120], [1, 1, 1, 120]] 85.36855292320251
+
+Time elapsed for measurement: 31.13 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.21 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1617	fail_ct: 0	Time elapsed: 5.76
+real cache size after init: 1617
+=======================
+GA Iter: 0	Max score: 0.9999	Min score: 0.9191	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9869	#Pop: 128	#M+: 1392	#M-: 42
+EvolutionarySearch		#s: 128	Time elapsed: 27.96
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 28.58 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 72ca68bb11bee9ca8a1f020c65fe14b9 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1956	fail_ct: 8	Time elapsed: 3.33
+real cache size after init: 1956
+=======================
+GA Iter: 0	Max score: 0.9999	Min score: 0.9382	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9882	#Pop: 128	#M+: 1383	#M-: 72
+EvolutionarySearch		#s: 128	Time elapsed: 14.46
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["c4a40b16179bb6885ba76d9e196a3add", [1, 14, 14, 184], [3, 3, 184, 1], [1, 1, 1, 184], [1, 14, 14, 184]] 152.2189905643463
+
+Time elapsed for measurement: 21.19 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.14 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1965	fail_ct: 8	Time elapsed: 3.34
+real cache size after init: 1965
+=======================
+GA Iter: 0	Max score: 0.9997	Min score: 0.9353	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9863	#Pop: 128	#M+: 1377	#M-: 74
+EvolutionarySearch		#s: 128	Time elapsed: 14.69
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 20.53 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 6d628209072e3e3dd8f49359935acea6 90
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 2430
+real cache size after init: 2430
+=======================
+GA Iter: 0	Max score: 0.9996	Min score: 0.9554	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9998	Min score: 0.9872	#Pop: 128	#M+: 1381	#M-: 78
+EvolutionarySearch		#s: 128	Time elapsed: 19.33
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["72ca68bb11bee9ca8a1f020c65fe14b9", [1, 14, 14, 184], [1, 1, 184, 80], [1, 1, 1, 80], [1, 14, 14, 80], [1, 14, 14, 80]] 101.77721047401428
+
+Time elapsed for measurement: 22.17 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.16 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 2430
+real cache size after init: 2430
+=======================
+GA Iter: 0	Max score: 0.9998	Min score: 0.9380	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9872	#Pop: 128	#M+: 1389	#M-: 74
+EvolutionarySearch		#s: 128	Time elapsed: 19.46
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 17.37 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 5584e4d68b3c2f6c78f7c8f4ae91f643 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1673	fail_ct: 0	Time elapsed: 5.94
+real cache size after init: 1673
+=======================
+GA Iter: 0	Max score: 0.9999	Min score: 0.9242	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9871	#Pop: 128	#M+: 1380	#M-: 35
+EvolutionarySearch		#s: 128	Time elapsed: 28.10
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["6d628209072e3e3dd8f49359935acea6", [1, 56, 56, 24], [1, 1, 24, 72], [1, 1, 1, 72], [1, 56, 56, 72]] 120.65310716629028
+
+Time elapsed for measurement: 24.31 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.20 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1684	fail_ct: 0	Time elapsed: 5.91
+real cache size after init: 1684
+=======================
+GA Iter: 0	Max score: 0.9998	Min score: 0.9195	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9866	#Pop: 128	#M+: 1383	#M-: 41
+EvolutionarySearch		#s: 128	Time elapsed: 28.09
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 28.90 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 8c53ca2904398da2889aa7508082d7bb 3
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 1
+=======================
+real cache size: 152
+real cache size after init: 152
+=======================
+GA Iter: 0	Max score: 0.9202	Min score: 0.1043	#Pop: 24	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9202	Min score: 0.1043	#Pop: 24	#M+: 425	#M-: 6493
+EvolutionarySearch		#s: 24	Time elapsed: 4.43
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 24 programs to measure:
+........................************************task tune:  ["5584e4d68b3c2f6c78f7c8f4ae91f643", [1, 28, 28, 240], [3, 3, 240, 1], [1, 1, 1, 240], [1, 14, 14, 240]] 145.66769695281982
+
+Time elapsed for measurement: 8.57 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.07 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 152
+real cache size after init: 152
+=======================
+GA Iter: 0	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 0	#M-: 0
+GA Iter: 4	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 412	#M-: 6534
+EvolutionarySearch		#s: 0	Time elapsed: 4.43
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 152
+real cache size after init: 152
+=======================
+GA Iter: 0	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 0	#M-: 0
+GA Iter: 4	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 432	#M-: 6426
+EvolutionarySearch		#s: 0	Time elapsed: 4.45
+It seems all candidates in the search space have been measured.
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+No valid state found in this search round. Check if it has traversed all of the search space.
+=======================
+#hash 5584e4d68b3c2f6c78f7c8f4ae91f643 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1595	fail_ct: 0	Time elapsed: 5.43
+real cache size after init: 1595
+=======================
+GA Iter: 0	Max score: 0.9989	Min score: 0.9214	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9883	#Pop: 128	#M+: 1381	#M-: 35
+EvolutionarySearch		#s: 128	Time elapsed: 26.53
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["8c53ca2904398da2889aa7508082d7bb", [1, 7, 7, 672], [1, 1, 1, 672]] 45.8931200504303
+
+Time elapsed for measurement: 27.04 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.22 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1576	fail_ct: 1	Time elapsed: 5.40
+real cache size after init: 1576
+=======================
+GA Iter: 0	Max score: 0.9994	Min score: 0.9236	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9998	Min score: 0.9862	#Pop: 128	#M+: 1391	#M-: 37
+EvolutionarySearch		#s: 128	Time elapsed: 26.84
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 22.28 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 72ca68bb11bee9ca8a1f020c65fe14b9 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1995	fail_ct: 0	Time elapsed: 3.55
+real cache size after init: 1995
+=======================
+GA Iter: 0	Max score: 0.9999	Min score: 0.9376	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9848	#Pop: 128	#M+: 1387	#M-: 75
+EvolutionarySearch		#s: 128	Time elapsed: 15.49
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["5584e4d68b3c2f6c78f7c8f4ae91f643", [1, 14, 14, 672], [5, 5, 672, 1], [1, 1, 1, 672], [1, 7, 7, 672]] 137.92996263504028
+
+Time elapsed for measurement: 21.90 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.15 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 2002	fail_ct: 1	Time elapsed: 3.58
+real cache size after init: 2002
+=======================
+GA Iter: 0	Max score: 0.9990	Min score: 0.9383	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9882	#Pop: 128	#M+: 1372	#M-: 70
+EvolutionarySearch		#s: 128	Time elapsed: 15.64
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 19.12 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 5f606dbf52f21fe707e2db850ef12471 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 1
+=======================
+real cache size: 0
+Sample Iter: 5	#Pop: 8	#Target: 50	fail_ct: 7653	Time elapsed: 5.34
+#Target has been reduced to 25 due to too many failures or duplications
+Sample Iter: 10	#Pop: 8	#Target: 25	fail_ct: 15310	Time elapsed: 10.70
+#Target has been reduced to 12 due to too many failures or duplications
+Sample Iter: 15	#Pop: 8	#Target: 12	fail_ct: 22939	Time elapsed: 16.04
+#Target has been reduced to 6 due to too many failures or duplications
+Sample Initial Population	#s: 8	fail_ct: 24476	Time elapsed: 17.13
+real cache size after init: 8
+=======================
+GA Iter: 0	Max score: 0.9984	Min score: 0.1034	#Pop: 8	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9984	Min score: 0.0808	#Pop: 24	#M+: 352	#M-: 6929
+EvolutionarySearch		#s: 24	Time elapsed: 4.42
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 24 programs to measure:
+........................************************task tune:  ["72ca68bb11bee9ca8a1f020c65fe14b9", [1, 28, 28, 120], [1, 1, 120, 40], [1, 1, 1, 40], [1, 28, 28, 40], [1, 28, 28, 40]] 103.5208261013031
+
+Time elapsed for measurement: 13.30 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.07 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 8	fail_ct: 1493	Time elapsed: 1.06
+real cache size after init: 8
+=======================
+GA Iter: 0	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 0	#M-: 0
+GA Iter: 4	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 437	#M-: 6578
+EvolutionarySearch		#s: 0	Time elapsed: 4.42
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 8	fail_ct: 1560	Time elapsed: 1.09
+real cache size after init: 8
+=======================
+GA Iter: 0	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 0	#M-: 0
+GA Iter: 4	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 409	#M-: 6723
+EvolutionarySearch		#s: 0	Time elapsed: 4.38
+It seems all candidates in the search space have been measured.
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+No valid state found in this search round. Check if it has traversed all of the search space.
+=======================
+#hash 72ca68bb11bee9ca8a1f020c65fe14b9 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1891	fail_ct: 21	Time elapsed: 2.97
+real cache size after init: 1891
+=======================
+GA Iter: 0	Max score: 0.9998	Min score: 0.9309	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9874	#Pop: 128	#M+: 1385	#M-: 74
+EvolutionarySearch		#s: 128	Time elapsed: 13.19
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["5f606dbf52f21fe707e2db850ef12471", [1, 28, 28, 72], [1, 1, 1, 72]] 69.81324934959412
+
+Time elapsed for measurement: 24.44 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.13 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1921	fail_ct: 12	Time elapsed: 2.98
+real cache size after init: 1921
+=======================
+GA Iter: 0	Max score: 1.0000	Min score: 0.9378	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9884	#Pop: 128	#M+: 1376	#M-: 76
+EvolutionarySearch		#s: 128	Time elapsed: 13.25
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 18.12 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash f5b447dcba2b43cc270d7c2062043946 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 5
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1527	fail_ct: 184	Time elapsed: 2.22
+real cache size after init: 1527
+=======================
+GA Iter: 0	Max score: 0.9984	Min score: 0.9073	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9861	#Pop: 128	#M+: 1385	#M-: 71
+EvolutionarySearch		#s: 128	Time elapsed: 9.90
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["72ca68bb11bee9ca8a1f020c65fe14b9", [1, 7, 7, 960], [1, 1, 960, 160], [1, 1, 1, 160], [1, 7, 7, 160], [1, 7, 7, 160]] 99.3187243938446
+
+Time elapsed for measurement: 20.60 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.12 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1526	fail_ct: 209	Time elapsed: 2.23
+real cache size after init: 1526
+=======================
+GA Iter: 0	Max score: 0.9991	Min score: 0.9241	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9865	#Pop: 128	#M+: 1377	#M-: 71
+EvolutionarySearch		#s: 128	Time elapsed: 10.03
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 16.48 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 71674820f9879a3e56274f61dbea193b 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1876	fail_ct: 54	Time elapsed: 2.62
+real cache size after init: 1876
+=======================
+GA Iter: 0	Max score: 0.9995	Min score: 0.9354	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9876	#Pop: 128	#M+: 1385	#M-: 77
+EvolutionarySearch		#s: 128	Time elapsed: 11.26
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["f5b447dcba2b43cc270d7c2062043946", [1, 1, 1, 672], [1, 1, 672, 168], [1, 1, 1, 168], [1, 1, 1, 168]] 85.62325620651245
+
+Time elapsed for measurement: 21.58 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.12 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1859	fail_ct: 43	Time elapsed: 2.60
+real cache size after init: 1859
+=======================
+GA Iter: 0	Max score: 0.9991	Min score: 0.9210	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9883	#Pop: 128	#M+: 1378	#M-: 75
+EvolutionarySearch		#s: 128	Time elapsed: 11.37
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 17.22 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash cb7a0e9e733d26ffc00e7f6c9cc0f879 1
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 2500
+real cache size after init: 2500
+=======================
+GA Iter: 0	Max score: 0.9999	Min score: 0.9438	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9867	#Pop: 128	#M+: 1379	#M-: 87
+EvolutionarySearch		#s: 128	Time elapsed: 19.94
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["71674820f9879a3e56274f61dbea193b", [1, 1, 1, 240], [1, 1, 240, 960], [1, 1, 1, 960], [1, 1, 1, 960]] 90.88572263717651
+
+Time elapsed for measurement: 20.34 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.17 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 2500
+real cache size after init: 2500
+=======================
+GA Iter: 0	Max score: 0.9999	Min score: 0.9462	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9886	#Pop: 128	#M+: 1389	#M-: 74
+EvolutionarySearch		#s: 128	Time elapsed: 19.90
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 16.17 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 08f7449d79e570b7274174709e5e5e01 4
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 2500
+real cache size after init: 2500
+=======================
+GA Iter: 0	Max score: 0.9999	Min score: 0.9521	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9876	#Pop: 128	#M+: 1382	#M-: 77
+EvolutionarySearch		#s: 128	Time elapsed: 7.71
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.Etask tune:  ["cb7a0e9e733d26ffc00e7f6c9cc0f879", [1, 28, 28, 72], [1, 1, 72, 40], [1, 1, 1, 40], [1, 28, 28, 40]] 101.32781767845154
+
+Time elapsed for measurement: 16.52 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.08 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 2500
+real cache size after init: 2500
+=======================
+GA Iter: 0	Max score: 0.9989	Min score: 0.9460	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9997	Min score: 0.9884	#Pop: 128	#M+: 1382	#M-: 76
+EvolutionarySearch		#s: 128	Time elapsed: 7.80
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E.E
+Time elapsed for measurement: 13.12 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+No valid state found in this search round. Check if it has traversed all of the search space.
+=======================
+#hash f5b447dcba2b43cc270d7c2062043946 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 5
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1238	fail_ct: 414	Time elapsed: 2.12
+real cache size after init: 1238
+=======================
+GA Iter: 0	Max score: 1.0000	Min score: 0.9082	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9861	#Pop: 128	#M+: 1381	#M-: 86
+EvolutionarySearch		#s: 128	Time elapsed: 9.40
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["08f7449d79e570b7274174709e5e5e01", [1, 1280], [1000, 1280], [1, 1000], [1, 1000]] 70.34532928466797
+
+Time elapsed for measurement: 20.08 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.12 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1250	fail_ct: 398	Time elapsed: 2.13
+real cache size after init: 1250
+=======================
+GA Iter: 0	Max score: 0.9994	Min score: 0.8989	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9994	Min score: 0.9845	#Pop: 128	#M+: 1386	#M-: 69
+EvolutionarySearch		#s: 128	Time elapsed: 9.40
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 15.89 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 8b290ca0f393be6ffa536c91e9bafd22 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1997	fail_ct: 1	Time elapsed: 4.09
+real cache size after init: 1997
+=======================
+GA Iter: 0	Max score: 0.9997	Min score: 0.9376	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9997	Min score: 0.9859	#Pop: 128	#M+: 1387	#M-: 77
+EvolutionarySearch		#s: 128	Time elapsed: 17.46
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["f5b447dcba2b43cc270d7c2062043946", [1, 1, 1, 72], [1, 1, 72, 24], [1, 1, 1, 24], [1, 1, 1, 24]] 83.16400671005249
+
+Time elapsed for measurement: 22.85 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.16 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1997	fail_ct: 0	Time elapsed: 4.09
+real cache size after init: 1997
+=======================
+GA Iter: 0	Max score: 0.9985	Min score: 0.9406	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9998	Min score: 0.9863	#Pop: 128	#M+: 1374	#M-: 79
+EvolutionarySearch		#s: 128	Time elapsed: 17.79
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 19.07 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 71674820f9879a3e56274f61dbea193b 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1811	fail_ct: 68	Time elapsed: 2.54
+real cache size after init: 1811
+=======================
+GA Iter: 0	Max score: 0.9996	Min score: 0.9287	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9998	Min score: 0.9866	#Pop: 128	#M+: 1379	#M-: 76
+EvolutionarySearch		#s: 128	Time elapsed: 11.02
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["8b290ca0f393be6ffa536c91e9bafd22", [1, 14, 14, 80], [1, 1, 80, 480], [1, 1, 1, 480], [1, 14, 14, 480]] 109.62102437019348
+
+Time elapsed for measurement: 20.78 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.12 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1811	fail_ct: 76	Time elapsed: 2.56
+real cache size after init: 1811
+=======================
+GA Iter: 0	Max score: 0.9988	Min score: 0.9212	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9876	#Pop: 128	#M+: 1374	#M-: 76
+EvolutionarySearch		#s: 128	Time elapsed: 11.27
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 16.49 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 8b290ca0f393be6ffa536c91e9bafd22 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1979	fail_ct: 1	Time elapsed: 4.01
+real cache size after init: 1979
+=======================
+GA Iter: 0	Max score: 0.9990	Min score: 0.9304	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9998	Min score: 0.9855	#Pop: 128	#M+: 1389	#M-: 73
+EvolutionarySearch		#s: 128	Time elapsed: 17.33
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["71674820f9879a3e56274f61dbea193b", [1, 1, 1, 120], [1, 1, 120, 480], [1, 1, 1, 480], [1, 1, 1, 480]] 88.8868522644043
+
+Time elapsed for measurement: 23.56 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.16 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1971	fail_ct: 3	Time elapsed: 4.01
+real cache size after init: 1971
+=======================
+GA Iter: 0	Max score: 0.9983	Min score: 0.9338	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9998	Min score: 0.9858	#Pop: 128	#M+: 1380	#M-: 80
+EvolutionarySearch		#s: 128	Time elapsed: 17.36
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 17.08 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 88a2e34d300a6ccfcf0228f0b90f13ec 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1794	fail_ct: 0	Time elapsed: 5.91
+real cache size after init: 1794
+=======================
+GA Iter: 0	Max score: 1.0000	Min score: 0.9277	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9879	#Pop: 128	#M+: 1379	#M-: 40
+EvolutionarySearch		#s: 128	Time elapsed: 27.25
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+............................................................task tune:  ["8b290ca0f393be6ffa536c91e9bafd22", [1, 14, 14, 80], [1, 1, 80, 200], [1, 1, 1, 200], [1, 14, 14, 200]] 107.52973508834839
+.T.T.T.T************************************************************
+Time elapsed for measurement: 35.55 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.22 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1743	fail_ct: 0	Time elapsed: 5.78
+real cache size after init: 1743
+=======================
+GA Iter: 0	Max score: 0.9999	Min score: 0.9141	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9869	#Pop: 128	#M+: 1382	#M-: 39
+EvolutionarySearch		#s: 128	Time elapsed: 27.58
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 24.52 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 8c53ca2904398da2889aa7508082d7bb 3
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 1
+=======================
+real cache size: 152
+real cache size after init: 152
+=======================
+GA Iter: 0	Max score: 0.9677	Min score: 0.0458	#Pop: 24	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9677	Min score: 0.0458	#Pop: 24	#M+: 420	#M-: 6535
+EvolutionarySearch		#s: 24	Time elapsed: 4.43
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 24 programs to measure:
+........................************************task tune:  ["88a2e34d300a6ccfcf0228f0b90f13ec", [1, 112, 112, 64], [3, 3, 64, 1], [1, 1, 1, 64], [1, 56, 56, 64]] 151.01596999168396
+
+Time elapsed for measurement: 8.97 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.07 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 152
+real cache size after init: 152
+=======================
+GA Iter: 0	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 0	#M-: 0
+GA Iter: 4	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 439	#M-: 6399
+EvolutionarySearch		#s: 0	Time elapsed: 4.45
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 152
+real cache size after init: 152
+=======================
+GA Iter: 0	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 0	#M-: 0
+GA Iter: 4	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 445	#M-: 6373
+EvolutionarySearch		#s: 0	Time elapsed: 4.44
+It seems all candidates in the search space have been measured.
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+No valid state found in this search round. Check if it has traversed all of the search space.
+=======================
+#hash cb7a0e9e733d26ffc00e7f6c9cc0f879 1
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 2500
+real cache size after init: 2500
+=======================
+GA Iter: 0	Max score: 0.9990	Min score: 0.9444	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9998	Min score: 0.9890	#Pop: 128	#M+: 1373	#M-: 69
+EvolutionarySearch		#s: 128	Time elapsed: 18.86
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["8c53ca2904398da2889aa7508082d7bb", [1, 7, 7, 960], [1, 1, 1, 960]] 46.364296436309814
+
+Time elapsed for measurement: 20.74 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.16 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 2500
+real cache size after init: 2500
+=======================
+GA Iter: 0	Max score: 0.9993	Min score: 0.9376	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9888	#Pop: 128	#M+: 1392	#M-: 73
+EvolutionarySearch		#s: 128	Time elapsed: 19.10
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 15.95 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash 5f606dbf52f21fe707e2db850ef12471 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 1
+=======================
+real cache size: 0
+Sample Iter: 5	#Pop: 8	#Target: 50	fail_ct: 7719	Time elapsed: 5.38
+#Target has been reduced to 25 due to too many failures or duplications
+Sample Iter: 10	#Pop: 8	#Target: 25	fail_ct: 15435	Time elapsed: 10.76
+#Target has been reduced to 12 due to too many failures or duplications
+Sample Iter: 15	#Pop: 8	#Target: 12	fail_ct: 23201	Time elapsed: 16.18
+#Target has been reduced to 6 due to too many failures or duplications
+Sample Initial Population	#s: 8	fail_ct: 24742	Time elapsed: 17.27
+real cache size after init: 8
+=======================
+GA Iter: 0	Max score: 0.7833	Min score: 0.0418	#Pop: 8	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9041	Min score: 0.0003	#Pop: 24	#M+: 364	#M-: 6820
+EvolutionarySearch		#s: 24	Time elapsed: 4.50
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 24 programs to measure:
+........................************************task tune:  ["cb7a0e9e733d26ffc00e7f6c9cc0f879", [1, 7, 7, 672], [1, 1, 672, 160], [1, 1, 1, 160], [1, 7, 7, 160]] 99.6579966545105
+
+Time elapsed for measurement: 13.51 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.07 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 8	fail_ct: 1517	Time elapsed: 1.07
+real cache size after init: 8
+=======================
+GA Iter: 0	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 0	#M-: 0
+GA Iter: 4	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 425	#M-: 6583
+EvolutionarySearch		#s: 0	Time elapsed: 4.40
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 8	fail_ct: 1516	Time elapsed: 1.08
+real cache size after init: 8
+=======================
+GA Iter: 0	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 0	#M-: 0
+GA Iter: 4	Max score: N/A	Min score: N/A	#Pop: 0	#M+: 401	#M-: 6551
+EvolutionarySearch		#s: 0	Time elapsed: 4.39
+It seems all candidates in the search space have been measured.
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+No valid state found in this search round. Check if it has traversed all of the search space.
+=======================
+#hash f5b447dcba2b43cc270d7c2062043946 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 5
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1302	fail_ct: 317	Time elapsed: 2.08
+real cache size after init: 1302
+=======================
+GA Iter: 0	Max score: 0.9993	Min score: 0.8967	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9998	Min score: 0.9845	#Pop: 128	#M+: 1380	#M-: 77
+EvolutionarySearch		#s: 128	Time elapsed: 9.38
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["5f606dbf52f21fe707e2db850ef12471", [1, 28, 28, 120], [1, 1, 1, 120]] 70.23215579986572
+
+Time elapsed for measurement: 19.27 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.12 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1321	fail_ct: 329	Time elapsed: 2.14
+real cache size after init: 1321
+=======================
+GA Iter: 0	Max score: 0.9984	Min score: 0.8891	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9997	Min score: 0.9851	#Pop: 128	#M+: 1371	#M-: 82
+EvolutionarySearch		#s: 128	Time elapsed: 9.58
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 15.41 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash f5b447dcba2b43cc270d7c2062043946 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 5
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1560	fail_ct: 139	Time elapsed: 2.21
+real cache size after init: 1560
+=======================
+GA Iter: 0	Max score: 0.9995	Min score: 0.9242	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9877	#Pop: 128	#M+: 1385	#M-: 78
+EvolutionarySearch		#s: 128	Time elapsed: 10.10
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["f5b447dcba2b43cc270d7c2062043946", [1, 1, 1, 120], [1, 1, 120, 32], [1, 1, 1, 32], [1, 1, 1, 32]] 81.99870347976685
+
+Time elapsed for measurement: 21.11 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.12 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1567	fail_ct: 156	Time elapsed: 2.23
+real cache size after init: 1567
+=======================
+GA Iter: 0	Max score: 0.9992	Min score: 0.9174	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9873	#Pop: 128	#M+: 1389	#M-: 75
+EvolutionarySearch		#s: 128	Time elapsed: 10.14
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************
+Time elapsed for measurement: 18.54 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+=======================
+#hash c4a40b16179bb6885ba76d9e196a3add 0
+=======================
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+Generate Sketches		#s: 3
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1678	fail_ct: 0	Time elapsed: 6.16
+real cache size after init: 1678
+=======================
+GA Iter: 0	Max score: 0.9995	Min score: 0.9343	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 0.9999	Min score: 0.9862	#Pop: 128	#M+: 1392	#M-: 42
+EvolutionarySearch		#s: 128	Time elapsed: 28.86
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................****************************************************************task tune:  ["f5b447dcba2b43cc270d7c2062043946", [1, 1, 1, 960], [1, 1, 960, 240], [1, 1, 1, 240], [1, 1, 1, 240]] 88.49903440475464
+
+Time elapsed for measurement: 27.91 s
+----------------------------------------------------------------------
+------------------------------  [ Train cost model ]
+----------------------------------------------------------------------
+Time elapsed for training: 0.21 s
+----------------------------------------------------------------------
+------------------------------  [ Search ]
+----------------------------------------------------------------------
+=======================
+real cache size: 0
+Sample Initial Population	#s: 1638	fail_ct: 0	Time elapsed: 6.05
+real cache size after init: 1638
+=======================
+GA Iter: 0	Max score: 1.0000	Min score: 0.9173	#Pop: 128	#M+: 0	#M-: 0
+GA Iter: 4	Max score: 1.0000	Min score: 0.9869	#Pop: 128	#M+: 1386	#M-: 41
+EvolutionarySearch		#s: 128	Time elapsed: 29.65
+----------------------------------------------------------------------
+------------------------------  [ Measure ]
+----------------------------------------------------------------------
+Get 64 programs to measure:
+................................................................T***************************************************************
+Time elapsed for measurement: 33.50 s
+----------------------------------------------------------------------
+------------------------------  [ Done ]
+----------------------------------------------------------------------
+task tune:  ["c4a40b16179bb6885ba76d9e196a3add", [1, 14, 14, 480], [3, 3, 480, 1], [1, 1, 1, 480], [1, 14, 14, 480]] 156.51193857192993
