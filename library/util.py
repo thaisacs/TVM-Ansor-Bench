@@ -17,6 +17,7 @@ network_to_n_trials = {
 networks_dict = {
     "resnet_18",
     "resnet_50",
+    "resnet_152",
     "mobilenet_v2",
     "mobilenet_v3",
     "wide_resnet_50",
@@ -25,7 +26,10 @@ networks_dict = {
     "inception_v3",
     "densenet_121",
     "bert",
-    "dcgan"
+    "dcgan",
+    "googlenet",
+    "alexnet",
+    "vgg_16"
 }
 
 def get_networks_arg():
@@ -34,4 +38,3 @@ def get_networks_arg():
         result.append(network)
     result.append("all")
     return result
-
