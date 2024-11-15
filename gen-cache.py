@@ -19,6 +19,7 @@ def sort_array(arr):
             j -= 1
             keyb = sum(arr[j]['r'][0])/len(arr[j]['r'][0])
         arr[j + 1] = result
+    return arr
 
 def sort_search_space(search_space):
     for hashx in search_space:
@@ -45,7 +46,7 @@ def dump_to_file(search_space):
         task_id += 1
 
 if __name__ == "__main__":
-    mypath_origin = '/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/results-origin'
+    mypath_origin = '/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/origin-results/'
     filenames_origin = next(walk(mypath_origin), (None, None, []))[2]  # [] if no file
     res = []
     lines = 0
@@ -55,18 +56,21 @@ if __name__ == "__main__":
             res.extend(file_names)
             for filename in file_names:
                 if("output" not in filename):
-                    with open(os.path.join(dir_path, filename), 'r') as f:
-                        best = 100000
-                        for l in f:
-                            result = json.loads(l)
-                            task = result['i'][0][0]
-                            hashx = task
-                            net = filename.split(" ")[1].replace(',', '')
-                            #if('densenet_121' == net.replace('\'', '') or 'inception_v3' == net.replace('\'', '')):
-                            #    print(net)
-                            if('resnet_18' == net.replace('\'', '') or 'resnet_50' == net.replace('\'', '')):
-                                print(net)
-                            else:
+                    #if('mobilenet_v2' == net.replace('\'', '') or 'mobilenet_v3' == net.replace('\'', '')):
+                    #    print(net)
+                    #if('densenet_121' == net.replace('\'', '') or 'alexnet' == net.replace('\'', '')):
+                    #    print(net)
+                    #if('vgg_16' == net.replace('\'', '') or 'googlenet' == net.replace('\'', '')):
+                    #    print(net)
+                    net = filename.split(" ")[1].replace(',', '')
+                    if('resnext_50' == net.replace('\'', '') or 'wide_resnet_50' == net.replace('\'', '')):
+                        print(net)
+                    else:
+                        with open(os.path.join(dir_path, filename), 'r') as f:
+                            for l in f:
+                                result = json.loads(l)
+                                task = result['i'][0][0]
+                                hashx = task
                                 if(hashx not in search_space):
                                     search_space[hashx] = []
                                 search_space[hashx].append(result)
