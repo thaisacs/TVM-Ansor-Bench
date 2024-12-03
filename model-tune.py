@@ -47,7 +47,7 @@ def auto_scheduler_tune(network_arg, dtype, target, log_file, tune):
 
     if(tune):
         tuner = auto_scheduler.TaskScheduler(tasks, task_weights)
-        tuner.tune(tuning_opt)
+        tuner.tune(tuning_opt, per_task_early_stopping=3)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='TVM Model Tune.\n')
