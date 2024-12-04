@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import time
 
 from library.networks import get_network_with_key, build_network_keys
 from tvm.driver import tvmc
@@ -47,7 +48,10 @@ def auto_scheduler_tune(network_arg, dtype, target, log_file, tune):
 
     if(tune):
         tuner = auto_scheduler.TaskScheduler(tasks, task_weights)
+        start = time.time()
         tuner.tune(tuning_opt, per_task_early_stopping=3)
+        end = time.time()
+        print(end - start)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='TVM Model Tune.\n')
