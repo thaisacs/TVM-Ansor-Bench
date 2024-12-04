@@ -49,7 +49,7 @@ def auto_scheduler_tune(network_arg, dtype, target, log_file, tune):
     if(tune):
         tuner = auto_scheduler.TaskScheduler(tasks, task_weights)
         start = time.time()
-        tuner.tune(tuning_opt, per_task_early_stopping=3)
+        tuner.tune(tuning_opt, per_task_early_stopping=192)
         end = time.time()
         print(end - start)
 
