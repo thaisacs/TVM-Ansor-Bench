@@ -49,7 +49,11 @@ def auto_scheduler_tune(network_arg, dtype, target, log_file, tune):
     if(tune):
         tuner = auto_scheduler.TaskScheduler(tasks, task_weights)
         start = time.time()
-        tuner.tune(tuning_opt, per_task_early_stopping=192)
+        tuner.tune(
+                tuning_opt,
+                #per_task_early_stopping=64*5,
+                subgraph_cache="/home/thais.camacho/tvm/src/auto_cache/params.yaml"
+        )
         end = time.time()
         print(end - start)
 
