@@ -10,6 +10,14 @@ from library.util import get_networks_arg, networks_dict, network_to_n_trials
 import tvm
 from tvm import relay, auto_scheduler
 
+import sys
+
+import numpy as np
+
+from tvm.relay import data_dep_optimization as ddo
+import tvm.relay.testing
+from tvm.contrib import graph_executor
+
 # --------------------------------------------------------------------------------------------
 
 def auto_scheduler_tune(network_arg, dtype, target, log_file, tune):
@@ -19,6 +27,8 @@ def auto_scheduler_tune(network_arg, dtype, target, log_file, tune):
 
     mod, params, inputs = get_network_with_key(network_arg, dtype)
     n_trials = network_to_n_trials[network_arg['network']]
+
+    print(inputs)
 
     if "cpu" in target.keys:
         tuning_opt = auto_scheduler.TuningOptions(
@@ -37,29 +47,29 @@ def auto_scheduler_tune(network_arg, dtype, target, log_file, tune):
             measure_callbacks=[auto_scheduler.RecordToFile(log_file)],
         )
 
-    #tasks, task_weights = auto_scheduler.extract_tasks(mod["main"], params, target)
-    #for idx, task in enumerate(tasks):
-    #    print(
-    #        "========== Task %d  (workload key: %s) =========="
-    #        % (idx, task.workload_key)
-    #    )
-    #    print(task.compute_dag)
+    print("Compile...")
+    input_shape = (224, 224, 3)
+    output_shape = (1, 1000)
 
-    #if(tune):
-    #    tuner = auto_scheduler.TaskScheduler(tasks, task_weights)
-    #    tuner.tune(tuning_opt)
-    model = tvmc.TVMCModel(mod, params)
-    log_file = "/home/thais.camacho/TVMBench/test.json"
-    print(os.path.exists(log_file))
-    package = tvmc.compile(
-            model,
-            target="llvm",
-            opt_level=0,
-            #tuning_records=log_file
-    )
-    for i in range(0, 5):
-        result = tvmc.run(package, device="cpu", benchmark=True)
-        print(result)
+    log_file = "/home/thais.camacho/TVMBench/original.json"
+    with auto_scheduler.ApplyHistoryBest(log_file):
+        with tvm.transform.PassContext(opt_level=3, config={"relay.backend.use_auto_scheduler": True}):
+            lib = relay.build(mod, target=target, params=params)
+    
+    # Create graph executor
+    dev = tvm.device(str(target), 0)
+    module = graph_executor.GraphModule(lib["default"](dev))
+    data_tvm = tvm.nd.array((np.random.uniform(size=input_shape)).astype(dtype))
+    module.set_input(inputs[0][0], data_tvm)
+
+    print(dir(module))
+
+    print(module)
+    
+    # Evaluate
+    print("Evaluate inference time cost...")
+    for x in range(0, 5):
+        print(module.benchmark(dev, repeat=10, min_repeat_ms=500, end_to_end=True))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='TVM Model Tune.\n')
