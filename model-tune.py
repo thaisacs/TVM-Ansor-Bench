@@ -13,7 +13,7 @@ from tvm import relay, auto_scheduler
 
 # --------------------------------------------------------------------------------------------
 
-def auto_scheduler_tune(network_arg, dtype, target, log_file, tune):
+def auto_scheduler_tune(network_arg, dtype, target, log_file, tune, trials):
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
     if os.path.exists(log_file):
         os.remove(log_file)
@@ -39,23 +39,25 @@ def auto_scheduler_tune(network_arg, dtype, target, log_file, tune):
         )
 
     tasks, task_weights = auto_scheduler.extract_tasks(mod["main"], params, target)
-    for idx, task in enumerate(tasks):
-        print(
-            "========== Task %d  (workload key: %s) =========="
-            % (idx, task.workload_key)
-        )
-        print(task.compute_dag)
+    #for idx, task in enumerate(tasks):
+    #    print(
+    #        "========== Task %d  (workload key: %s) =========="
+    #        % (idx, task.workload_key)
+    #    )
+    #    print(task.compute_dag)
+    n_trials = trials*len(tasks)
+    print(n_trials)
 
     if(tune):
         tuner = auto_scheduler.TaskScheduler(tasks, task_weights)
         start = time.time()
         tuner.tune(
                 tuning_opt,
-                #per_task_early_stopping=64*5,
-                subgraph_cache="/home/thais.camacho/tvm/src/auto_cache/params.yaml"
+                per_task_early_stopping=64*5,
+                #subgraph_cache="/home/thais.camacho/tvm/src/auto_cache/params.yaml"
         )
         end = time.time()
-        print(end - start)
+        print("tunning time:", end - start)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='TVM Model Tune.\n')
@@ -113,5 +115,5 @@ if __name__ == "__main__":
                     args.logdir, "autoscheduler", str(target.kind), str(network_arg) + ".json"
                 )
                 
-                auto_scheduler_tune(network_arg, args.dtype, target, log_file, args.tune)
+                auto_scheduler_tune(network_arg, args.dtype, target, log_file, args.tune, 1000)
 
