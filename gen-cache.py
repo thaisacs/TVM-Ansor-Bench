@@ -27,6 +27,7 @@ def sort_search_space(search_space):
 
 def dump_to_file(search_space):
     task_id = 0
+    files_in_cache = {}
     for idx, taskx in enumerate(search_space):
         shape = taskx[38:]
         h = taskx[2:34]
@@ -40,13 +41,26 @@ def dump_to_file(search_space):
 
         data = {'id': task_id, 'hash': h, 'shape': shape, 'space': configs}
 
-        with open('cachex'+str(task_id)+'.yml', 'w') as outfile:
-            yaml.dump(data, outfile)
+        if(not h in files_in_cache):
+            files_in_cache[h] = []
+
+        data = {'hash': h, 'shape': shape, 'space': configs}
+
+        #with open('cachex'+str(task_id)+'.yml', 'w') as outfile:
+        #    yaml.dump(data, outfile)
+        files_in_cache[h].append('cachex'+str(task_id)+'.yml')
         
         task_id += 1
+        #with open('cachex'+str(task_id)+'.yml', 'w') as outfile:
+        #    yaml.dump(data, outfile)
+    
+    for h in files_in_cache:
+        data = {'size': len(files_in_cache[h]), 'files': files_in_cache[h]}
+        with open(h+'.yml', 'a') as outfile:
+            yaml.dump(data, outfile)
 
 if __name__ == "__main__":
-    mypath_origin = '/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/origin-results/'
+    mypath_origin = '/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/search_space_1000/original-results-01/'
     filenames_origin = next(walk(mypath_origin), (None, None, []))[2]  # [] if no file
     res = []
     lines = 0
@@ -62,9 +76,10 @@ if __name__ == "__main__":
                     #    print(net)
                     #if('vgg_16' == net.replace('\'', '') or 'googlenet' == net.replace('\'', '')):
                     #    print(net)
+                    #if('resnet_50' == net.replace('\'', '') or 'resnet_18' == net.replace('\'', '')):
                     net = filename.split(" ")[1].replace(',', '')
                     if('resnext_50' == net.replace('\'', '') or 'wide_resnet_50' == net.replace('\'', '')):
-                        print(net)
+                        ...
                     else:
                         with open(os.path.join(dir_path, filename), 'r') as f:
                             for l in f:
@@ -75,7 +90,7 @@ if __name__ == "__main__":
                                     search_space[hashx] = []
                                 search_space[hashx].append(result)
                         
-    sort_search_space(search_space)
+    #sort_search_space(search_space)
     dump_to_file(search_space)
 
     #for hashx in search_space:
