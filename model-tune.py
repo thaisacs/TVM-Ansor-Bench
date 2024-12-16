@@ -19,7 +19,9 @@ def auto_scheduler_tune(network_arg, dtype, target, log_file, tune, trials):
         os.remove(log_file)
 
     mod, params, inputs = get_network_with_key(network_arg, dtype)
-    n_trials = network_to_n_trials[network_arg['network']]
+    tasks, task_weights = auto_scheduler.extract_tasks(mod["main"], params, target)
+    n_trials = trials*len(tasks)
+    print(n_trials)
 
     if "cpu" in target.keys:
         tuning_opt = auto_scheduler.TuningOptions(
@@ -37,16 +39,6 @@ def auto_scheduler_tune(network_arg, dtype, target, log_file, tune, trials):
             runner=measure_ctx.runner,
             measure_callbacks=[auto_scheduler.RecordToFile(log_file)],
         )
-
-    tasks, task_weights = auto_scheduler.extract_tasks(mod["main"], params, target)
-    #for idx, task in enumerate(tasks):
-    #    print(
-    #        "========== Task %d  (workload key: %s) =========="
-    #        % (idx, task.workload_key)
-    #    )
-    #    print(task.compute_dag)
-    n_trials = trials*len(tasks)
-    print(n_trials)
 
     if(tune):
         tuner = auto_scheduler.TaskScheduler(tasks, task_weights)
@@ -75,6 +67,7 @@ if __name__ == "__main__":
         help="The compilation target.",
     )
     parser.add_argument("--dtype", type=str, default="float32", help="The data type.")
+    parser.add_argument("--trials", type=int, default=64*6, help="The number of trials.")
     parser.add_argument("--tune", help="The tune activate flag.", action='store_true')
     parser.add_argument(
         "--logdir", type=str, default="tmp_logs/", help="Log file directory."
@@ -115,5 +108,5 @@ if __name__ == "__main__":
                     args.logdir, "autoscheduler", str(target.kind), str(network_arg) + ".json"
                 )
                 
-                auto_scheduler_tune(network_arg, args.dtype, target, log_file, args.tune, 1000)
+                auto_scheduler_tune(network_arg, args.dtype, target, log_file, args.tune, args.trials)
 
