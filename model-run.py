@@ -42,10 +42,9 @@ def auto_scheduler_run(network_arg, dtype, target):
         )
 
     print("Compile...")
-    input_shape = (224, 224, 3)
-    output_shape = (1, 1000)
+    input_shape = (3, 224, 224)
 
-    log_file = "/home/thais.camacho/TVMBench/cache.json"
+    log_file = "/home/thais.camacho/TVMBench/lab-env/original.json"
     with auto_scheduler.ApplyHistoryBest(log_file):
         with tvm.transform.PassContext(opt_level=3, config={"relay.backend.use_auto_scheduler": True}):
             lib = relay.build(mod, target=target, params=params)
@@ -58,8 +57,8 @@ def auto_scheduler_run(network_arg, dtype, target):
 
     # Evaluate
     print("Evaluate inference time cost...")
-    for x in range(0, 5):
-        print(module.benchmark(dev, repeat=10, min_repeat_ms=500, end_to_end=True))
+    for x in range(0, 1):
+        print(module.benchmark(dev, repeat=10, number=10, min_repeat_ms=500, end_to_end=True))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='TVM Model Tune.\n')
