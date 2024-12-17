@@ -20,15 +20,9 @@ from tvm.contrib import graph_executor
 
 # --------------------------------------------------------------------------------------------
 
-def auto_scheduler_tune(network_arg, dtype, target, log_file, tune):
-    os.makedirs(os.path.dirname(log_file), exist_ok=True)
-    if os.path.exists(log_file):
-        os.remove(log_file)
-
+def auto_scheduler_run(network_arg, dtype, target):
     mod, params, inputs = get_network_with_key(network_arg, dtype)
     n_trials = network_to_n_trials[network_arg['network']]
-
-    print(inputs)
 
     if "cpu" in target.keys:
         tuning_opt = auto_scheduler.TuningOptions(
@@ -117,11 +111,5 @@ if __name__ == "__main__":
                     "network": arg[0],
                     "args": arg[1],
                 }
-                print("Tune %s ..." % network_arg)
-
-                log_file = os.path.join(
-                    args.logdir, "autoscheduler", str(target.kind), str(network_arg) + ".json"
-                )
-                
-                auto_scheduler_tune(network_arg, args.dtype, target, log_file, args.tune)
+                auto_scheduler_run(network_arg, args.dtype, target)
 
