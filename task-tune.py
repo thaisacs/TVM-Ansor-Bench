@@ -13,9 +13,8 @@ from tvm import relay, auto_scheduler
 
 # --------------------------------------------------------------------------------------------
 
-def auto_scheduler_tune(network_arg, dtype, target, tune):
+def auto_scheduler_tune(network_arg, dtype, target, tune, trials):
     mod, params, inputs = get_network_with_key(network_arg, dtype)
-    n_trials = 1000
 
     tasks, task_weights = auto_scheduler.extract_tasks(mod["main"], params, target)
     for idx, task in enumerate(tasks):
@@ -37,7 +36,7 @@ def auto_scheduler_tune(network_arg, dtype, target, tune):
 
             if "cpu" in target.keys:
                 tuning_opt = auto_scheduler.TuningOptions(
-                    num_measure_trials=n_trials,
+                    num_measure_trials=trials,
                     runner=auto_scheduler.LocalRunner(repeat=10, enable_cpu_cache_flush=True),
                     measure_callbacks=[auto_scheduler.RecordToFile(log_file)],
                 )
@@ -47,7 +46,7 @@ def auto_scheduler_tune(network_arg, dtype, target, tune):
                     repeat=1, min_repeat_ms=min_repeat_ms, timeout=10
                 )
                 tuning_opt = auto_scheduler.TuningOptions(
-                    num_measure_trials=n_trials,
+                    num_measure_trials=trials,
                     runner=measure_ctx.runner,
                     measure_callbacks=[auto_scheduler.RecordToFile(log_file)],
                 )
@@ -57,7 +56,6 @@ def auto_scheduler_tune(network_arg, dtype, target, tune):
             task.tune(tuning_opt)
             end = time.time()
             print("task tune: ", str(task.workload_key), end - start)
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='TVM Model Tune.\n')
@@ -75,6 +73,7 @@ if __name__ == "__main__":
         help="The compilation target.",
     )
     parser.add_argument("--dtype", type=str, default="float32", help="The data type.")
+    parser.add_argument("--trials", type=int, default=1000, help="The number of trials.")
     parser.add_argument("--tune", help="The tune activate flag.", action='store_true')
     parser.add_argument(
         "--logdir", type=str, default="tmp_logs/", help="Log file directory."
@@ -100,5 +99,4 @@ if __name__ == "__main__":
             }
             print("Tune %s ..." % network_arg)
 
-            auto_scheduler_tune(network_arg, args.dtype, target, args.tune)
-
+            auto_scheduler_tune(network_arg, args.dtype, target, args.tune, args.trials)
