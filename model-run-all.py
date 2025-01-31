@@ -33,23 +33,62 @@ from scipy.stats import sem
 def model_run(network_arg, dtype, target, log_file):
     mod, params, inputs = get_network_with_key(network_arg, dtype)
 
+    #print("Compile...")
+    #input_shape = (3, 224, 224)
+
+    #with auto_scheduler.ApplyHistoryBest(log_file):
+    #    with tvm.transform.PassContext(opt_level=3, config={"relay.backend.use_auto_scheduler": True}):
+    #        lib = relay.build(mod, target=target, params=params)
+    
+    ## Create graph executor
+    #dev = tvm.device(str(target), 0)
+    #module = graph_executor.GraphModule(lib["default"](dev))
+    #data_tvm = tvm.nd.array((np.random.uniform(size=input_shape)).astype(dtype))
+    #module.set_input(inputs[0][0], data_tvm)
+
+    ## Evaluate
+    #print("Evaluate inference time cost...")
+    #for x in range(0, 1):
+    #    print(module.benchmark(dev, repeat=10, number=10, min_repeat_ms=500, end_to_end=True))
     print("Compile...")
-    input_shape = (3, 224, 224)
+    input_shape = inputs[0][1]
 
     with auto_scheduler.ApplyHistoryBest(log_file):
         with tvm.transform.PassContext(opt_level=3, config={"relay.backend.use_auto_scheduler": True}):
             lib = relay.build(mod, target=target, params=params)
-    
-    # Create graph executor
-    dev = tvm.device(str(target), 0)
-    module = graph_executor.GraphModule(lib["default"](dev))
-    data_tvm = tvm.nd.array((np.random.uniform(size=input_shape)).astype(dtype))
-    module.set_input(inputs[0][0], data_tvm)
+            
+    with auto_scheduler.ApplyHistoryBest(log_file):
+        with tvm.transform.PassContext(opt_level=0, config={"relay.backend.use_auto_scheduler": True}):
+            ref_lib = relay.build(mod, target=target, params=params)
 
-    # Evaluate
-    print("Evaluate inference time cost...")
-    for x in range(0, 1):
-        print(module.benchmark(dev, repeat=10, number=10, min_repeat_ms=500, end_to_end=True))
+    # Check the correctness
+    def get_output(input_data, data, lib):
+        dev = tvm.device(str(target), 0)
+        module = graph_executor.GraphModule(lib["default"](dev))
+        module.set_input(input_data, data)
+        module.run()
+        return module.get_output(0).numpy()
+
+    def run_bench(input_data, data, lib):
+        dev = tvm.device(str(target), 0)
+        # Create graph executor
+        module = graph_executor.GraphModule(lib["default"](dev))
+        module.set_input(input_data, data)
+        # Evaluate
+        print("Evaluate inference time cost...")
+        for x in range(0, 10):
+            print(module.benchmark(dev, repeat=10, number=10, min_repeat_ms=500, end_to_end=True))
+
+    np.random.seed(0)
+    data_tvm = tvm.nd.array((np.random.uniform(size=input_shape)).astype(dtype))
+    run_bench(inputs[0][0], data_tvm, lib)
+
+    np.random.seed(0)
+    data_tvm = tvm.nd.array((np.random.uniform(size=input_shape)).astype(dtype))
+    actual_output1 = get_output(inputs[0][0], data_tvm, lib)
+    expected_output = get_output(inputs[0][0], data_tvm, ref_lib)
+
+    tvm.testing.assert_allclose(actual_output1, expected_output, rtol=1e-4, atol=1e-4)
 
 #if __name__ == "__main__":
 #    parser = argparse.ArgumentParser(description='TVM Model Tune.\n')
