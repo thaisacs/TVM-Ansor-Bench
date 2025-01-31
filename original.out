@@ -1,0 +1,267 @@
+/home/thais.camacho/miniconda3/envs/tvm-build-venv/lib/python3.11/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/home/thais.camacho/miniconda3/envs/tvm-build-venv/lib/python3.11/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=None`.
+  warnings.warn(msg)
+/home/thais.camacho/miniconda3/envs/tvm-build-venv/lib/python3.11/site-packages/torch/jit/_trace.py:1303: TracerWarning: Output nr 1. of the traced function does not match the corresponding output of the Python function. Detailed error:
+Tensor-likes are not close!
+
+Mismatched elements: 1000 / 1000 (100.0%)
+Greatest absolute difference: 0.03182009141892195 at index (0, 732) (up to 1e-05 allowed)
+Greatest relative difference: 53701.549019607846 at index (0, 201) (up to 1e-05 allowed)
+  _check_trace(
+-----------------------------------
+fused_nn_dense_add_nn_relu
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["65e811ec662fed0ef79466c14798ee3d", [1, 9216], [4096, 9216], [1, 4096], [1, 4096]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 9216]
+p1 = PLACEHOLDER [4096, 9216]
+T_matmul_NT(i0, i1) += (p0[i0, k]*p1[i1, k])
+p2 = PLACEHOLDER [1, 4096]
+T_add(ax0, ax1) = (T_matmul_NT[ax0, ax1] + p2[ax0, ax1])
+T_relu(ax0, ax1) = max(T_add[ax0, ax1], 0f)
+
+-----------------------------------
+fused_nn_dense_add_nn_relu
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["65e811ec662fed0ef79466c14798ee3d", [1, 4096], [4096, 4096], [1, 4096], [1, 4096]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 4096]
+p1 = PLACEHOLDER [4096, 4096]
+T_matmul_NT(i0, i1) += (p0[i0, k]*p1[i1, k])
+p2 = PLACEHOLDER [1, 4096]
+T_add(ax0, ax1) = (T_matmul_NT[ax0, ax1] + p2[ax0, ax1])
+T_relu(ax0, ax1) = max(T_add[ax0, ax1], 0f)
+
+-----------------------------------
+fused_nn_dense_add
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["08f7449d79e570b7274174709e5e5e01", [1, 4096], [1000, 4096], [1, 1000], [1, 1000]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 4096]
+p1 = PLACEHOLDER [1000, 4096]
+T_matmul_NT(i0, i1) += (p0[i0, k]*p1[i1, k])
+p2 = PLACEHOLDER [1, 1000]
+T_add(ax0, ax1) = (T_matmul_NT[ax0, ax1] + p2[ax0, ax1])
+
+/home/thais.camacho/miniconda3/envs/tvm-build-venv/lib/python3.11/site-packages/torch/jit/_trace.py:1303: TracerWarning: Output nr 1. of the traced function does not match the corresponding output of the Python function. Detailed error:
+Tensor-likes are not close!
+
+Mismatched elements: 998 / 1000 (99.8%)
+Greatest absolute difference: 0.02309438376687467 at index (0, 699) (up to 1e-05 allowed)
+Greatest relative difference: 779.4660774042525 at index (0, 805) (up to 1e-05 allowed)
+  _check_trace(
+-----------------------------------
+fused_nn_dense_add
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["08f7449d79e570b7274174709e5e5e01", [1, 960], [1280, 960], [1, 1280], [1, 1280]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 960]
+p1 = PLACEHOLDER [1280, 960]
+T_matmul_NT(i0, i1) += (p0[i0, k]*p1[i1, k])
+p2 = PLACEHOLDER [1, 1280]
+T_add(ax0, ax1) = (T_matmul_NT[ax0, ax1] + p2[ax0, ax1])
+
+-----------------------------------
+fused_nn_dense_add
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["08f7449d79e570b7274174709e5e5e01", [1, 1280], [1000, 1280], [1, 1000], [1, 1000]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 1280]
+p1 = PLACEHOLDER [1000, 1280]
+T_matmul_NT(i0, i1) += (p0[i0, k]*p1[i1, k])
+p2 = PLACEHOLDER [1, 1000]
+T_add(ax0, ax1) = (T_matmul_NT[ax0, ax1] + p2[ax0, ax1])
+
+/home/thais.camacho/miniconda3/envs/tvm-build-venv/lib/python3.11/site-packages/torch/jit/_trace.py:1303: TracerWarning: Output nr 1. of the traced function does not match the corresponding output of the Python function. Detailed error:
+Tensor-likes are not close!
+
+Mismatched elements: 1000 / 1000 (100.0%)
+Greatest absolute difference: 7.894575476646423 at index (0, 134) (up to 1e-05 allowed)
+Greatest relative difference: 434.497838374776 at index (0, 815) (up to 1e-05 allowed)
+  _check_trace(
+-----------------------------------
+fused_nn_dense_add
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["08f7449d79e570b7274174709e5e5e01", [1, 2048], [1000, 2048], [1, 1000], [1, 1000]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 2048]
+p1 = PLACEHOLDER [1000, 2048]
+T_matmul_NT(i0, i1) += (p0[i0, k]*p1[i1, k])
+p2 = PLACEHOLDER [1, 1000]
+T_add(ax0, ax1) = (T_matmul_NT[ax0, ax1] + p2[ax0, ax1])
+
+/home/thais.camacho/miniconda3/envs/tvm-build-venv/lib/python3.11/site-packages/torchvision/models/googlenet.py:47: FutureWarning: The default weight initialization of GoogleNet will be changed in future releases of torchvision. If you wish to keep the old behavior (which leads to long initialization times due to scipy/scipy#11299), please set init_weights=True.
+  warnings.warn(
+/home/thais.camacho/miniconda3/envs/tvm-build-venv/lib/python3.11/site-packages/torch/jit/_trace.py:1303: TracerWarning: Output nr 1. of the traced function does not match the corresponding output of the Python function. Detailed error:
+Tensor-likes are not close!
+
+Mismatched elements: 1000 / 1000 (100.0%)
+Greatest absolute difference: 0.2795583941042423 at index (0, 5) (up to 1e-05 allowed)
+Greatest relative difference: 326.07053376132717 at index (0, 687) (up to 1e-05 allowed)
+  _check_trace(
+/home/thais.camacho/miniconda3/envs/tvm-build-venv/lib/python3.11/site-packages/torch/jit/_trace.py:1303: TracerWarning: Output nr 2. of the traced function does not match the corresponding output of the Python function. Detailed error:
+Tensor-likes are not close!
+
+Mismatched elements: 1000 / 1000 (100.0%)
+Greatest absolute difference: 0.4622437059879303 at index (0, 646) (up to 1e-05 allowed)
+Greatest relative difference: 664.2905843540252 at index (0, 572) (up to 1e-05 allowed)
+  _check_trace(
+/home/thais.camacho/miniconda3/envs/tvm-build-venv/lib/python3.11/site-packages/torch/jit/_trace.py:1303: TracerWarning: Output nr 3. of the traced function does not match the corresponding output of the Python function. Detailed error:
+Tensor-likes are not close!
+
+Mismatched elements: 999 / 1000 (99.9%)
+Greatest absolute difference: 0.4627736546099186 at index (0, 80) (up to 1e-05 allowed)
+Greatest relative difference: 748.3742108134792 at index (0, 378) (up to 1e-05 allowed)
+  _check_trace(
+-----------------------------------
+fused_nn_dense_add
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["08f7449d79e570b7274174709e5e5e01", [1, 1024], [1000, 1024], [1, 1000], [1, 1000]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 1024]
+p1 = PLACEHOLDER [1000, 1024]
+T_matmul_NT(i0, i1) += (p0[i0, k]*p1[i1, k])
+p2 = PLACEHOLDER [1, 1000]
+T_add(ax0, ax1) = (T_matmul_NT[ax0, ax1] + p2[ax0, ax1])
+
+-----------------------------------
+fused_nn_dense_add_nn_relu
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["65e811ec662fed0ef79466c14798ee3d", [1, 2048], [1024, 2048], [1, 1024], [1, 1024]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 2048]
+p1 = PLACEHOLDER [1024, 2048]
+T_matmul_NT(i0, i1) += (p0[i0, k]*p1[i1, k])
+p2 = PLACEHOLDER [1, 1024]
+T_add(ax0, ax1) = (T_matmul_NT[ax0, ax1] + p2[ax0, ax1])
+T_relu(ax0, ax1) = max(T_add[ax0, ax1], 0f)
+
+/home/thais.camacho/miniconda3/envs/tvm-build-venv/lib/python3.11/site-packages/torch/jit/_trace.py:1303: TracerWarning: Output nr 1. of the traced function does not match the corresponding output of the Python function. Detailed error:
+Tensor-likes are not close!
+
+Mismatched elements: 1000 / 1000 (100.0%)
+Greatest absolute difference: 0.32981792092323303 at index (0, 537) (up to 1e-05 allowed)
+Greatest relative difference: 1307.6651645508348 at index (0, 476) (up to 1e-05 allowed)
+  _check_trace(
+/home/thais.camacho/miniconda3/envs/tvm-build-venv/lib/python3.11/site-packages/torch/jit/_trace.py:1303: TracerWarning: Output nr 1. of the traced function does not match the corresponding output of the Python function. Detailed error:
+Tensor-likes are not close!
+
+Mismatched elements: 1000 / 1000 (100.0%)
+Greatest absolute difference: 0.6350045204162598 at index (0, 697) (up to 1e-05 allowed)
+Greatest relative difference: 525.0369788813605 at index (0, 603) (up to 1e-05 allowed)
+  _check_trace(
+-----------------------------------
+fused_nn_dense_add_nn_relu
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["65e811ec662fed0ef79466c14798ee3d", [1, 25088], [4096, 25088], [1, 4096], [1, 4096]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 25088]
+p1 = PLACEHOLDER [4096, 25088]
+T_matmul_NT(i0, i1) += (p0[i0, k]*p1[i1, k])
+p2 = PLACEHOLDER [1, 4096]
+T_add(ax0, ax1) = (T_matmul_NT[ax0, ax1] + p2[ax0, ax1])
+T_relu(ax0, ax1) = max(T_add[ax0, ax1], 0f)
+
+#new_experiment
+alexnet
+TVM
+{'network': 'alexnet', 'args': [(1, 3, 224, 224)]}
+float32
+llvm
+/home/thais.camacho/benchs/exp3/TVMBench/tmp_logs/autoscheduler/llvm/model_tuning_space/end-to-end-original/end-to-end-original-01/output-alexnet-original/{'network': 'alexnet', 'args': [(1, 3, 224, 224)]}.json
+Compile...
+Evaluate inference time cost...
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  86.9024      86.9023      86.9374      86.8676       0.0173                  
+#new_experiment
+mobilenet_v3
+TVM
+{'network': 'mobilenet_v3', 'args': [(1, 3, 224, 224)]}
+float32
+llvm
+/home/thais.camacho/benchs/exp3/TVMBench/tmp_logs/autoscheduler/llvm/model_tuning_space/end-to-end-original/end-to-end-original-01/output-mobilenet_v3-original/{'network': 'mobilenet_v3', 'args': [(1, 3, 224, 224)]}.json
+Compile...
+Evaluate inference time cost...
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+   5.8269       5.8283       5.8865       5.7537       0.0409                  
+#new_experiment
+inception_v3
+TVM
+{'network': 'inception_v3', 'args': [(1, 3, 299, 299)]}
+float32
+llvm
+/home/thais.camacho/benchs/exp3/TVMBench/tmp_logs/autoscheduler/llvm/model_tuning_space/end-to-end-original/end-to-end-original-01/output-inception_v3-original/{'network': 'inception_v3', 'args': [(1, 3, 299, 299)]}.json
+Compile...
+Evaluate inference time cost...
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  27.6597      27.6508      27.7481      27.5619       0.0474                  
+#new_experiment
+googlenet
+TVM
+{'network': 'googlenet', 'args': [(1, 3, 224, 224)]}
+float32
+llvm
+/home/thais.camacho/benchs/exp3/TVMBench/tmp_logs/autoscheduler/llvm/model_tuning_space/end-to-end-original/end-to-end-original-01/output-googlenet-original/{'network': 'googlenet', 'args': [(1, 3, 224, 224)]}.json
+Compile...
+Evaluate inference time cost...
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  16.6668      16.6357      16.9102      16.6049       0.0838                  
+#new_experiment
+resnext_50
+TVM
+{'network': 'resnext_50', 'args': [(1, 3, 224, 224)]}
+float32
+llvm
+/home/thais.camacho/benchs/exp3/TVMBench/tmp_logs/autoscheduler/llvm/model_tuning_space/end-to-end-original/end-to-end-original-01/output-resnext_50-original/{'network': 'resnext_50', 'args': [(1, 3, 224, 224)]}.json
+Compile...
+Evaluate inference time cost...
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  24.2250      24.2331      24.3061      24.1238       0.0511                  
+#new_experiment
+wide_resnet_50
+TVM
+{'network': 'wide_resnet_50', 'args': [(1, 3, 224, 224)]}
+float32
+llvm
+/home/thais.camacho/benchs/exp3/TVMBench/tmp_logs/autoscheduler/llvm/model_tuning_space/end-to-end-original/end-to-end-original-01/output-wide_resnet_50-original/{'network': 'wide_resnet_50', 'args': [(1, 3, 224, 224)]}.json
+Compile...
+Evaluate inference time cost...
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  47.5829      47.5846      47.7874      47.3887       0.1028                  
+#new_experiment
+mobilenet_v2
+TVM
+{'network': 'mobilenet_v2', 'args': [(1, 3, 224, 224)]}
+float32
+llvm
+/home/thais.camacho/benchs/exp3/TVMBench/tmp_logs/autoscheduler/llvm/model_tuning_space/end-to-end-original/end-to-end-original-01/output-mobilenet_v2-original/{'network': 'mobilenet_v2', 'args': [(1, 3, 224, 224)]}.json
+Compile...
+Evaluate inference time cost...
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+   3.7502       3.7432       3.8402       3.7156       0.0312                  
+#new_experiment
+vgg_16
+TVM
+{'network': 'vgg_16', 'args': [(1, 3, 224, 224)]}
+float32
+llvm
+/home/thais.camacho/benchs/exp3/TVMBench/tmp_logs/autoscheduler/llvm/model_tuning_space/end-to-end-original/end-to-end-original-01/output-vgg_16-original/{'network': 'vgg_16', 'args': [(1, 3, 224, 224)]}.json
+Compile...
+Evaluate inference time cost...
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  205.4472     205.4600     205.6729     205.2040      0.1365                  
+#new_experiment
+densenet_121
+TVM
+{'network': 'densenet_121', 'args': [(1, 3, 224, 224)]}
+float32
+llvm
+/home/thais.camacho/benchs/exp3/TVMBench/tmp_logs/autoscheduler/llvm/model_tuning_space/end-to-end-original/end-to-end-original-01/output-densenet_121-original/{'network': 'densenet_121', 'args': [(1, 3, 224, 224)]}.json
+Compile...
+Evaluate inference time cost...
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  33.0069      32.9282      33.8157      32.8397       0.2728                  
+#new_experiment
+resnet_152
+TVM
+{'network': 'resnet_152', 'args': [(1, 3, 224, 224)]}
+float32
+llvm
+/home/thais.camacho/benchs/exp3/TVMBench/tmp_logs/autoscheduler/llvm/model_tuning_space/end-to-end-original/end-to-end-original-01/output-resnet_152-original/{'network': 'resnet_152', 'args': [(1, 3, 224, 224)]}.json
+Compile...
+Evaluate inference time cost...
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  47.5515      47.4006      48.8518      47.1572       0.4650                  
