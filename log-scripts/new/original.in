@@ -1,0 +1,30 @@
+-----------------------------------------------------------------------------------------------------------------
+|    0 |                                    vm_mod_fused_nn_conv2d_add |        0.201 |         516.02 |    768 |
+|    1 |                          vm_mod_fused_nn_conv2d_add_nn_relu_5 |        0.455 |         508.26 |   1472 |
+|    2 |                         vm_mod_fused_nn_conv2d_add_nn_relu_12 |        0.218 |         471.23 |    704 |
+|    3 |                          vm_mod_fused_nn_conv2d_add_nn_relu_1 |        0.053 |         488.76 |    512 |
+|    4 |                                     vm_mod_fused_nn_dense_add |            - |              - |     64 |
+|    5 |                                  vm_mod_fused_nn_conv2d_add_3 |        0.431 |         477.25 |    640 |
+|    6 |                          vm_mod_fused_nn_conv2d_add_nn_relu_8 |        0.474 |         488.46 |    768 |
+|    7 |                      vm_mod_fused_nn_conv2d_add_add_nn_relu_3 |        0.223 |         462.11 |   1024 |
+|    8 |                          vm_mod_fused_nn_conv2d_add_nn_relu_4 |        0.396 |         521.61 |   1280 |
+|    9 |                        vm_mod_fused_nn_conv2d_add_add_nn_relu |        0.210 |         500.28 |    896 |
+|   10 |                      vm_mod_fused_nn_conv2d_add_add_nn_relu_1 |        0.211 |         493.41 |    768 |
+|   11 |                         vm_mod_fused_nn_conv2d_add_nn_relu_13 |        0.484 |         477.39 |    704 |
+|   12 |                                  vm_mod_fused_nn_conv2d_add_2 |        0.409 |         503.59 |   1280 |
+|   13 |                         vm_mod_fused_nn_conv2d_add_nn_relu_10 |        0.414 |         496.42 |   1088 |
+|   14 |                            vm_mod_fused_nn_conv2d_add_nn_relu |        0.463 |         512.77 |    960 |
+|   15 |                          vm_mod_fused_nn_conv2d_add_nn_relu_7 |        0.395 |         521.60 |   1280 |
+|   16 | vm_mod_fused_nn_contrib_conv2d_winograd_without_weight_transform_add_nn_relu_1 |        0.217 |         454.36 |   2112 |
+|   17 |                          vm_mod_fused_nn_conv2d_add_nn_relu_3 |        0.199 |         519.09 |    768 |
+|   18 |                           vm_mod_fused_nn_adaptive_avg_pool2d |        0.005 |          -0.00 |     64 |
+|   19 |                         vm_mod_fused_nn_conv2d_add_nn_relu_11 |        0.498 |         464.75 |   1024 |
+|   20 |                                  vm_mod_fused_nn_conv2d_add_1 |        0.397 |         518.13 |   1472 |
+|   21 |                          vm_mod_fused_nn_conv2d_add_nn_relu_6 |        0.199 |         516.91 |    896 |
+|   22 |                      vm_mod_fused_nn_conv2d_add_add_nn_relu_2 |        0.211 |         489.36 |    832 |
+|   23 |                                    vm_mod_fused_nn_max_pool2d |        0.019 |          93.31 |    192 |
+|   24 | vm_mod_fused_nn_contrib_conv2d_winograd_without_weight_transform_add_nn_relu |        0.173 |         539.81 |   3200 |
+|   25 |                          vm_mod_fused_nn_conv2d_add_nn_relu_9 |        0.205 |         501.71 |    832 |
+|   26 |                          vm_mod_fused_nn_conv2d_add_nn_relu_2 |        0.470 |         493.30 |   1472 |
+-----------------------------------------------------------------------------------------------------------------
+Estimated total latency: - ms	Trials: 26955	Used time : 28747 s	Next ID: 3

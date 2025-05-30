@@ -24,6 +24,7 @@ def gen_min(paths):
             for (dir_path, dir_names, file_names) in walk(path):
                 count = 0
                 for filename in file_names:
+                    print(filename)
                     if("output" not in filename):
                         count += 1
                         with open(os.path.join(dir_path, filename), 'r') as f:
@@ -120,18 +121,22 @@ def gen_file_out(path, arr):
                     idx = idx[5]
                 net = filename.split('.')[0].split('-')[1]
                 time = get_tuning_time(dir_path+'/'+filename)
-                if(idx == '01'):
-                    if(not net in arr):
-                        arr[net] = {}
-                    arr[net][approache] = time
-                    #print(approache + ',' + idx + ',' + net + ',' + str(time))
+                #if(idx == '01'):
+                if(not net in arr):
+                    arr[net] = {}
+                    arr[net][approache] = [time]
+                else:
+                    if(not approache in arr[net]):
+                        arr[net][approache] = [time]
+                    else:
+                        arr[net][approache].append(time)
 
 def get_tuning_time(filename):
     with open(filename) as f:
         for line in f:
             pass
     last_line = line
-    value = float(last_line.split(' ')[2].replace('\n', ''))
+    value = float(last_line.split(' ')[2].replace('\n', ''))/60
     return value
 
 if __name__ == "__main__":
@@ -142,27 +147,42 @@ if __name__ == "__main__":
         "/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/model_tuning_space/end-to-end-original-threshold/"
     ]
 
-    print('approach, id, model_name, tuning_time')
+    print('approach, model_name, tuning_mean, tuning_std')
     arr = {}
     for x in filesc_:
         gen_file_out(x, arr)
 
+
     for net in arr:
-        #print(net + ',' + str(arr[net]['TVM']/arr[net]['TVM']) + ',' + str(arr[net]['TGC']/arr[net]['TVM']) + ',' + str(arr[net]['TVM-ES']/arr[net]['TVM']) + ',' + str(arr[net]['TGC-ES']/arr[net]['TVM']))
-        print('TVM,0' + ',' + net + ',' + str(arr[net]['TVM']/arr[net]['TVM']))
-        print('TGC,0' + ',' + net + ',' + str(arr[net]['TGC']/arr[net]['TVM']))
-        print('TVM-ES,0' + ',' + net + ',' + str(arr[net]['TVM-ES']/arr[net]['TVM']))
-        print('TGC-ES,0' + ',' + net + ',' + str(arr[net]['TGC-ES']/arr[net]['TVM']))
+        speedups_1 = []
+        speedups_2 = []
+        speedups_3 = []
+        speedups_4 = []
+        for i in range(0, len(arr[net]['TVM'])):
+            #speedups_1.append(arr[net]['TVM'][i]/arr[net]['TGC-ES'][i])
+            #speedups_1.append(arr[net]['TGC-ES'][i]/arr[net]['TVM'][i])
+            speedups_1.append(arr[net]['TGC-ES'][i])
+            #speedups_2.append(arr[net]['TVM-ES'][i]/arr[net]['TVM'][i])
+            #speedups_3.append(arr[net]['TGC'][i]/arr[net]['TVM'][i])
+            #speedups_4.append(arr[net]['TVM'][i]/arr[net]['TVM'][i])
+            speedups_4.append(arr[net]['TVM'][i])
 
+        ##print("=========")
+        ##print(net)
+        ##print(np.mean(speedups_1))
+        ##print(np.std(speedups_1))
+        ##print("=========")
+        #print(np.mean(speedups_2))
+        #print(np.std(speedups_2))
+        #print("=========")
+        #print(np.mean(speedups_3))
+        #print(np.std(speedups_3))
+        #print("=========")
+        #print(np.mean(speedups_4))
+        #print(np.std(speedups_4))
+        #print("=========")
 
-    #count = 0
-    #for x in filesc_:
-    #    values = []
-    #    for y in x[1]:
-    #        v = get_tuning_time(y)
-    #        values.append(v)
-
-    #    s1 = values[0]/values[0]
-    #    s2 = values[1]/values[0]
-    #    s3 = values[2]/values[0]
-    #    print(x[0]+','+str(values[0])+','+str(values[1])+','+str(values[2])+','+str(s1)+','+str(s2)+','+str(s3))
+        print('TGC,' + net + ',' + str(np.mean(speedups_1)) + ',' + str(np.std(speedups_1)))
+        #print('TVM-ES,' + net + ',' + str(np.mean(speedups_2)) + ',' + str(np.std(speedups_2)))
+        #print('TGC,' + net + ',' + str(np.mean(speedups_3)) + ',' + str(np.std(speedups_3)))
+        print('TVM,' + net + ',' + str(np.mean(speedups_4)) + ',' + str(np.std(speedups_4)))

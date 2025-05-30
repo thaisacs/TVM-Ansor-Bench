@@ -1,0 +1,20 @@
+-----------------------------------------------------------------------------------------------------------------
+|    0 |                          vm_mod_fused_nn_conv2d_add_nn_relu_5 |        0.724 |         319.33 |     64 |
+|    1 |                                    vm_mod_fused_nn_conv2d_add |        0.030 |         424.57 |     64 |
+|    2 |                          vm_mod_fused_nn_conv2d_add_nn_relu_1 |        0.557 |         415.83 |     64 |
+|    3 |                                     vm_mod_fused_nn_dense_add |            - |              - |     64 |
+|    4 |                        vm_mod_fused_nn_conv2d_add_add_nn_relu |        0.620 |         373.96 |     64 |
+|    5 |                          vm_mod_fused_nn_conv2d_add_nn_relu_4 |        0.281 |         411.14 |     64 |
+|    6 |                      vm_mod_fused_nn_conv2d_add_add_nn_relu_1 |        0.591 |         391.34 |     64 |
+|    7 |                                  vm_mod_fused_nn_conv2d_add_2 |        0.034 |         381.75 |     64 |
+|    8 |                            vm_mod_fused_nn_conv2d_add_nn_relu |        0.643 |         369.72 |     64 |
+|    9 | vm_mod_fused_nn_contrib_conv2d_winograd_without_weight_transform_add_add_nn_relu_1 |        0.314 |         314.30 |     64 |
+|   10 | vm_mod_fused_nn_contrib_conv2d_winograd_without_weight_transform_add_nn_relu_1 |        0.325 |         303.10 |     64 |
+|   11 |                          vm_mod_fused_nn_conv2d_add_nn_relu_3 |        0.380 |         304.82 |     64 |
+|   12 |                           vm_mod_fused_nn_adaptive_avg_pool2d |        0.004 |          -0.00 |     64 |
+|   13 | vm_mod_fused_nn_contrib_conv2d_winograd_without_weight_transform_add_add_nn_relu |        0.296 |         315.01 |     64 |
+|   14 |                                  vm_mod_fused_nn_conv2d_add_1 |        0.036 |         356.15 |     64 |
+|   15 |                          vm_mod_fused_nn_conv2d_add_nn_relu_2 |        0.295 |         392.77 |     64 |
+|   16 |                                    vm_mod_fused_nn_max_pool2d |        0.021 |          86.97 |     64 |
+|   17 | vm_mod_fused_nn_contrib_conv2d_winograd_without_weight_transform_add_nn_relu |        0.255 |         366.19 |     64 |
+-----------------------------------------------------------------------------------------------------------------

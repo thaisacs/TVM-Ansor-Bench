@@ -171,16 +171,18 @@ if __name__ == "__main__":
     for net in arr:
         networks = [net]
 
-        for arg in networks_keys:
-            network = arg[0]
-            if(network in networks):
-                network_arg = {
-                    "network": arg[0],
-                    "args": arg[1],
-                }
-                for x in arr[net]:
-                    logfile = arr[net][x]
-                    print("#new_experiment")
-                    print(net)
-                    print(x)
-                    model_run(network_arg, dtype, target, logfile)
+        if(net != "inception_v3"):
+
+            for arg in networks_keys:
+                network = arg[0]
+                if(network in networks):
+                    network_arg = {
+                        "network": arg[0],
+                        "args": arg[1],
+                    }
+                    for x in arr[net]:
+                        logfile = arr[net][x]
+                        print("#new_experiment")
+                        print(net)
+                        print(x)
+                        model_run(network_arg, dtype, target, logfile)

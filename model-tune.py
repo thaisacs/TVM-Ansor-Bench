@@ -44,8 +44,8 @@ def auto_scheduler_tune(network_arg, dtype, target, log_file, tune, trials):
         start = time.time()
         tuner.tune(
                 tuning_opt,
-                per_task_early_stopping=64*5,
-                #subgraph_cache="/home/thais.camacho/tvm/src/auto_cache/params.yaml"
+                #per_task_early_stopping=64*5,
+                subgraph_cache="/home/thais/Dev/tvm/src/auto_cache/params.yaml"
         )
         end = time.time()
         print("tunning time:", end - start)

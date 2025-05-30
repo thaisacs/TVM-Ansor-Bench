@@ -77,21 +77,23 @@ if __name__ == "__main__":
                     #if('vgg_16' == net.replace('\'', '') or 'googlenet' == net.replace('\'', '')):
                     #    print(net)
                     #if('resnet_50' == net.replace('\'', '') or 'resnet_18' == net.replace('\'', '')):
+                    #if('resnext_50' == net.replace('\'', '') or 'wide_resnet_50' == net.replace('\'', '')):
                     net = filename.split(" ")[1].replace(',', '')
-                    if('resnext_50' == net.replace('\'', '') or 'wide_resnet_50' == net.replace('\'', '')):
+                    if('resnet_152' == net.replace('\'', '') or 'inception_v3' == net.replace('\'', '')):
                         ...
                     else:
                         with open(os.path.join(dir_path, filename), 'r') as f:
                             for l in f:
                                 result = json.loads(l)
                                 task = result['i'][0][0]
+                                print(task)
                                 hashx = task
                                 if(hashx not in search_space):
                                     search_space[hashx] = []
                                 search_space[hashx].append(result)
                         
     #sort_search_space(search_space)
-    dump_to_file(search_space)
+    #dump_to_file(search_space)
 
     #for hashx in search_space:
     #    print(hashx)
