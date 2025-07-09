@@ -1,80 +1,74 @@
 #!/usr/bin/python3
 
 import torch
-import torchvision.models as models  # torchvision>=0.9.0
-import transformers  # pip3 install transformers==3.5 torch==1.7
-import tvm.relay.testing
-from library.common import (
-    convert_to_nhwc,
-    dtype2torch,
-    NETWORK_INFO_FOLDER,
-    get_relay_ir_filename,
-    get_task_info_filename,
-)
-from tvm import relay
-import os
+import torchvision.models as models
 
-from tvm.driver import tvmc
+import onnx
+import torch.onnx
+
+import tvm
+from tvm.relay.frontend.onnx import from_onnx
+
+# -------------------------
+
+
+def load_model(model_name: str, use_weights=True):
+    try:
+        # Get constructor from torchvision.models
+        constructor = getattr(models, model_name)
+
+        if use_weights:
+            # Create weights enum name, e.g. "ResNet18_Weights"
+            weights_enum_name = f"{model_name.capitalize()}_Weights"
+
+            # Fix for camelCase models (e.g., efficientnet_b0)
+            weights_enum = getattr(models, weights_enum_name, None)
+            if weights_enum is not None:
+                weights = weights_enum.DEFAULT
+                return constructor(weights=weights).eval()
+
+        # If no weights requested or not found
+        return constructor().eval()
+
+    except AttributeError:
+        raise ValueError(f"Model '{model_name}' is not available in torchvision.models")
+
+
 
 def get_network_with_key(network_key, dtype):
-    name = network_key['network']
-    args = network_key['args']
+    name = network_key["network"]
+    name_replaced = network_key["network"].replace("_", "")
 
-    if name in [
-        "resnet_18",
-        "resnet_50",
-        "resnet_152",
-        "mobilenet_v2",
-        "mobilenet_v3",
-        "wide_resnet_50",
-        "resnext_50",
-        "resnet3d_18",
-        "inception_v3",
-        "densenet_121",
-        "vgg_16",
-        "googlenet",
-        "alexnet",
-        "vgg"
-    ]:
-        if name in ["resnet_18", "resnet_50", "resnet_152"]:
-            model = getattr(models, name.replace("_", ""))(pretrained=False)
-        elif name == "wide_resnet_50":
-            model = getattr(models, "wide_resnet50_2")(pretrained=False)
-        elif name == "resnext_50":
-            model = getattr(models, "resnext50_32x4d")(pretrained=False)
-        elif name == "mobilenet_v2":
-            model = getattr(models, name)(pretrained=False)
-        elif name == "mobilenet_v3":
-            model = getattr(models, name + "_large")(pretrained=False)
-        elif name == "inception_v3":
-            model = getattr(models, name)(
-                pretrained=False, aux_logits=False, init_weights=True
-            )
-        elif name == "densenet_121":
-            model = getattr(models, name.replace("_", ""))(pretrained=False)
-        elif name == "resnet3d_18":
-            model = models.video.r3d_18(pretrained=False)
-        elif name == "vgg_16":
-            model = getattr(models, name.replace("_", ""))(pretrained=False)
-        elif name == "googlenet":
-            model = getattr(models, name.replace("_", ""))(pretrained=False)
-        elif name == "alexnet":
-            model = getattr(models, name.replace("_", ""))(pretrained=False)
+    if name == "mobilenet_v2":
+        name_replaced = name
+    elif name == "mobilenet_v3":
+        name_replaced = name + "_large"
+    elif name == "wide_resnet_50":
+        name_replaced = "wide_resnet50_2"
+    elif name == "resnext_50":
+        name_replaced = "resnext50_32x4d"
+    elif name == "inception_v3":
+        name_replaced = name
 
-        input_shape = args[0]
+    torch_model = load_model(name_replaced)
+    torch.onnx.export(
+        torch_model,
+        network_key["args"],
+        name_replaced + ".onnx",
+        opset_version=14,
+        input_names=["input"],
+        output_names=["output"],
+    )
+    onnx_model = onnx.load(name_replaced + ".onnx")
+    input_shape = tuple(network_key["args"].shape)
+    shape_dict = {"input": input_shape}
+    mod, params = from_onnx(
+        onnx_model,
+        freeze_params=True,
+    )
+    #mod, params = relay.frontend.detach_params(mod)
+    return mod, params
 
-        input_data = torch.randn(input_shape).type(dtype2torch(dtype))
-        scripted_model = torch.jit.trace(model, input_data).eval()
-
-        input_name = "input0"
-        shape_list = [(input_name, input_shape)]
-        mod, params = relay.frontend.from_pytorch(scripted_model, shape_list)
-        mod = convert_to_nhwc(mod)
-        inputs = [(input_name, input_shape, dtype)]
-    else:
-        raise ValueError("Invalid name: " + name)
-
-    return mod, params, inputs
 
 def build_network_keys():
     network_keys = []
@@ -82,72 +76,97 @@ def build_network_keys():
     # googlenet
     for batch_size in [1]:
         for image_size in [224]:
-            network_keys.append((f'googlenet',
-                                [(batch_size, 3, image_size, image_size)]))
+            args = torch.randn(
+                batch_size, 3, image_size, image_size, dtype=torch.float32
+            )
+            network_keys.append((f"googlenet", args))
 
     # alexnet
     for batch_size in [1]:
         for image_size in [224]:
-            network_keys.append((f'alexnet',
-                                [(batch_size, 3, image_size, image_size)]))
+            args = torch.randn(
+                batch_size, 3, image_size, image_size, dtype=torch.float32
+            )
+            network_keys.append((f"alexnet", args))
 
     # vgg
     for batch_size in [1]:
         for image_size in [224]:
-            network_keys.append((f'vgg_16',
-                                [(batch_size, 3, image_size, image_size)]))
+            args = torch.randn(
+                batch_size, 3, image_size, image_size, dtype=torch.float32
+            )
+            network_keys.append((f"vgg_16", args))
+
     # resnet_18
     for batch_size in [1]:
         for image_size in [224]:
-            network_keys.append((f'resnet_18',
-                                [(batch_size, 3, image_size, image_size)]))
+            args = torch.randn(
+                batch_size, 3, image_size, image_size, dtype=torch.float32
+            )
+            network_keys.append((f"resnet_18", args))
 
     # resnet_50
     for batch_size in [1]:
         for image_size in [224]:
-            network_keys.append((f'resnet_50',
-                                [(batch_size, 3, image_size, image_size)]))
+            args = torch.randn(
+                batch_size, 3, image_size, image_size, dtype=torch.float32
+            )
+            network_keys.append((f"resnet_50", args))
 
     # resnet_152
     for batch_size in [1]:
         for image_size in [224]:
-            network_keys.append((f'resnet_152',
-                                [(batch_size, 3, image_size, image_size)]))
+            args = torch.randn(
+                batch_size, 3, image_size, image_size, dtype=torch.float32
+            )
+            network_keys.append((f"resnet_152", args))
 
     # mobilenet_v2
     for batch_size in [1]:
         for image_size in [224]:
-            network_keys.append((f'mobilenet_v2',
-                                [(batch_size, 3, image_size, image_size)]))
+            args = torch.randn(
+                batch_size, 3, image_size, image_size, dtype=torch.float32
+            )
+            network_keys.append((f"mobilenet_v2", args))
 
     # mobilenet_v3
     for batch_size in [1]:
         for image_size in [224]:
-            network_keys.append((f'mobilenet_v3',
-                                [(batch_size, 3, image_size, image_size)]))
+            args = torch.randn(
+                batch_size, 3, image_size, image_size, dtype=torch.float32
+            )
+            network_keys.append((f"mobilenet_v3", args))
 
     # wide-resnet
     for batch_size in [1]:
         for image_size in [224]:
-            network_keys.append((f'wide_resnet_50',
-                                [(batch_size, 3, image_size, image_size)]))
+            args = torch.randn(
+                batch_size, 3, image_size, image_size, dtype=torch.float32
+            )
+            network_keys.append((f"wide_resnet_50", args))
 
     # resnext
     for batch_size in [1]:
         for image_size in [224]:
-            network_keys.append((f'resnext_50',
-                                [(batch_size, 3, image_size, image_size)]))
+            args = torch.randn(
+                batch_size, 3, image_size, image_size, dtype=torch.float32
+            )
+            network_keys.append((f"resnext_50", args))
 
     # inception-v3
     for batch_size in [1]:
         for image_size in [299]:
-            network_keys.append((f'inception_v3',
-                                [(batch_size, 3, image_size, image_size)]))
+            args = torch.randn(
+                batch_size, 3, image_size, image_size, dtype=torch.float32
+            )
+            network_keys.append((f"inception_v3", args))
 
     # densenet
     for batch_size in [1]:
         for image_size in [224]:
-            network_keys.append((f'densenet_121',
-                                [(batch_size, 3, image_size, image_size)]))
+            args = torch.randn(
+                batch_size, 3, image_size, image_size, dtype=torch.float32
+            )
+            network_keys.append((f"densenet_121", args))
 
     return network_keys

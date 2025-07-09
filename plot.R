@@ -21,7 +21,7 @@ ggplot(data=data, aes(x=iteration, y=value, group=tipo, ymin=value-(2*desvio), y
         axis.text.y = element_text(size=8),
         legend.background = element_rect(fill=alpha('white', 0.6)))+
   #ggtitle('a) The best solution found in each search iteration (Error ribbons indicate ± 2 SEM)')+
-  ggtitle('       Error ribbons indicate ± 2 SEM')+
+  ggtitle('       95% Confidence Interval')+
   labs(x="Iteration", y="Normalized Execution Time")+
   scale_x_continuous(breaks = seq(0, 1000, 100))+
   scale_color_manual(values=c('#E07B39', '#6194C2FF'), aesthetics = c("colour", "fill"))
@@ -39,6 +39,6 @@ ggplot(data=data, aes(x=iteration, y=value, group=tipo, ymin=value-(2*desvio), y
         legend.background = element_rect(fill=alpha('white', 0.6)))+
   labs(x="Iteration", y="Accumulated Normalized Execution Time")+
   #ggtitle('b) The compilation overhead in each search iteration (Error ribbons indicate ± 2 SEM)')+
-  ggtitle('       Error ribbons indicate ± 2 SEM')+
+  ggtitle('       95% Confidence Interval')+
   scale_x_continuous(breaks = seq(0, 1000, 100))+
   scale_color_manual(values=c('#E07B39', '#6194C2FF'), aesthetics = c("colour", "fill"))

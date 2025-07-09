@@ -132,7 +132,7 @@ if __name__ == "__main__":
     #paths.append({'path': cache_arr, 'name': 'TGC - Experiment 4'})
     cache_path = '/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/search_space_1000/cache-results-01/'
     cache_arr = gen_paths(cache_path)
-    paths.append({'path': cache_arr, 'name': 'TGC'})
+    paths.append({'path': cache_arr, 'name': 'TGC-Ansor'})
 
     #original_path = '/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/search_space_1000/original-results-01/'
     #original_arr = gen_paths(original_path)
@@ -148,10 +148,10 @@ if __name__ == "__main__":
     #paths.append({'path': original_arr, 'name': 'Ansor - Experiment 4'})
     original_path = '/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/search_space_1000/original-results-01/'
     original_arr = gen_paths(original_path)
-    paths.append({'path': original_arr, 'name': 'Ansor'})
+    paths.append({'path': original_arr, 'name': 'TVM-Ansor'})
 
     min_dict = gen_min(paths)
     print('iteration,' + 'value,' + 'desvio,' + 'tipo')
     for x in paths:
-        #gen_arr_best(x['path'], x['name'], min_dict)
-        gen_arr_acc(x['path'], x['name'], min_dict)
+        gen_arr_best(x['path'], x['name'], min_dict)
+        #gen_arr_acc(x['path'], x['name'], min_dict)
