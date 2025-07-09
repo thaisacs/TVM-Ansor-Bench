@@ -79,7 +79,6 @@ if __name__ == "__main__":
         help="The compilation target.",
     )
     parser.add_argument("--dtype", type=str, default="float32", help="The data type.")
-    parser.add_argument("--tune", help="The tune activate flag.", action='store_true')
     parser.add_argument(
         "--logfile", type=str, default="tmp_logs/log.json", help="Log filename."
     )
