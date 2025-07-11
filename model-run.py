@@ -5,7 +5,7 @@ import os
 
 from library.networks import get_network_with_key, build_network_keys
 from tvm.driver import tvmc
-from library.util import get_networks_arg, networks_dict, network_to_n_trials
+from library.util import get_networks_arg, networks_dict
 
 import tvm
 from tvm import relay, auto_scheduler
@@ -21,9 +21,13 @@ from tvm.contrib import graph_executor
 # --------------------------------------------------------------------------------------------
 
 def model_run(network_arg, dtype, target, log_file):
-    mod, params, inputs = get_network_with_key(network_arg, dtype)
+    mod, params = get_network_with_key(network_arg, dtype)
 
     print("Compile...")
+    args = network_arg['args']
+    print(args)
+    input_name = "input0"
+    inputs = [(input_name, args.shape, dtype)]
     input_shape = inputs[0][1]
 
     with auto_scheduler.ApplyHistoryBest(log_file):
@@ -46,10 +50,11 @@ def model_run(network_arg, dtype, target, log_file):
         dev = tvm.device(str(target), 0)
         # Create graph executor
         module = graph_executor.GraphModule(lib["default"](dev))
-        module.set_input(input_data, data)
+        print(module)
+        module.set_input("input", data)
         # Evaluate
         print("Evaluate inference time cost...")
-        for x in range(0, 1):
+        for x in range(0, 10):
             print(module.benchmark(dev, repeat=10, number=10, min_repeat_ms=500, end_to_end=True))
 
     np.random.seed(0)
@@ -58,8 +63,8 @@ def model_run(network_arg, dtype, target, log_file):
 
     np.random.seed(0)
     data_tvm = tvm.nd.array((np.random.uniform(size=input_shape)).astype(dtype))
-    actual_output1 = get_output(inputs[0][0], data_tvm, lib)
-    expected_output = get_output(inputs[0][0], data_tvm, ref_lib)
+    actual_output1 = get_output("input", data_tvm, lib)
+    expected_output = get_output("input", data_tvm, ref_lib)
 
     tvm.testing.assert_allclose(actual_output1, expected_output, rtol=1e-4, atol=1e-4)
 
