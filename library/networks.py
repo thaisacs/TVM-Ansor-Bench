@@ -11,7 +11,6 @@ from tvm.relay.frontend.onnx import from_onnx
 
 # -------------------------
 
-
 def load_model(model_name: str, use_weights=True):
     try:
         # Get constructor from torchvision.models
@@ -32,8 +31,6 @@ def load_model(model_name: str, use_weights=True):
 
     except AttributeError:
         raise ValueError(f"Model '{model_name}' is not available in torchvision.models")
-
-
 
 def get_network_with_key(network_key, dtype):
     name = network_key["network"]
@@ -60,15 +57,12 @@ def get_network_with_key(network_key, dtype):
         output_names=["output"],
     )
     onnx_model = onnx.load(name_replaced + ".onnx")
-    input_shape = tuple(network_key["args"].shape)
-    shape_dict = {"input": input_shape}
     mod, params = from_onnx(
         onnx_model,
-        freeze_params=True,
+        freeze_params=False,
     )
     #mod, params = relay.frontend.detach_params(mod)
     return mod, params
-
 
 def build_network_keys():
     network_keys = []
