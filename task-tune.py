@@ -6,7 +6,7 @@ import time
 
 from library.networks import get_network_with_key, build_network_keys
 from tvm.driver import tvmc
-from library.util import get_networks_arg, networks_dict, network_to_n_trials
+from library.util import get_networks_arg, networks_dict
 
 import tvm
 from tvm import relay, auto_scheduler
@@ -14,7 +14,7 @@ from tvm import relay, auto_scheduler
 # --------------------------------------------------------------------------------------------
 
 def auto_scheduler_tune(network_arg, dtype, target, tune, trials):
-    mod, params, inputs = get_network_with_key(network_arg, dtype)
+    mod, params = get_network_with_key(network_arg, dtype)
 
     tasks, task_weights = auto_scheduler.extract_tasks(mod["main"], params, target)
     for idx, task in enumerate(tasks):

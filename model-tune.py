@@ -18,10 +18,11 @@ def auto_scheduler_tune(network_arg, dtype, target, log_file, tune, trials):
     if os.path.exists(log_file):
         os.remove(log_file)
 
-    mod, params, inputs = get_network_with_key(network_arg, dtype)
+    mod, params = get_network_with_key(network_arg, dtype)
+
+    start = time.time()
     tasks, task_weights = auto_scheduler.extract_tasks(mod["main"], params, target)
     n_trials = trials*len(tasks)
-
     if "cpu" in target.keys:
         tuning_opt = auto_scheduler.TuningOptions(
             num_measure_trials=n_trials,
@@ -38,17 +39,15 @@ def auto_scheduler_tune(network_arg, dtype, target, log_file, tune, trials):
             runner=measure_ctx.runner,
             measure_callbacks=[auto_scheduler.RecordToFile(log_file)],
         )
-
     if(tune):
         tuner = auto_scheduler.TaskScheduler(tasks, task_weights)
-        start = time.time()
         tuner.tune(
                 tuning_opt,
                 #per_task_early_stopping=64*5,
                 subgraph_cache="/home/thais/Dev/tvm/src/auto_cache/params.yaml"
         )
-        end = time.time()
-        print("tunning time:", end - start)
+    end = time.time()
+    print("tunning time:", end - start)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='TVM Model Tune.\n')
