@@ -6,7 +6,7 @@ import time
 
 from library.networks import get_network_with_key, build_network_keys
 from tvm.driver import tvmc
-from library.util import get_networks_arg, networks_dict, network_to_n_trials
+from library.util import get_networks_arg, networks_dict
 
 import tvm
 from tvm import relay, auto_scheduler
@@ -44,7 +44,7 @@ def auto_scheduler_tune(network_arg, dtype, target, log_file, tune, trials):
         tuner.tune(
                 tuning_opt,
                 #per_task_early_stopping=64*5,
-                subgraph_cache="/home/thais/Dev/tvm/src/auto_cache/params.yaml"
+                #subgraph_cache="/home/thais/Dev/tvm/src/auto_cache/params.yaml"
         )
     end = time.time()
     print("tunning time:", end - start)
@@ -92,7 +92,7 @@ if __name__ == "__main__":
             print("Tune %s ..." % network_arg)
                 
             log_file = os.path.join(
-                args.logdir, "autoscheduler", str(target.kind), str(network_arg) + ".json"
+                args.logdir, "autoscheduler", str(target.kind), str(arg[0]) + ".json"
             )
                 
             auto_scheduler_tune(network_arg, args.dtype, target, log_file, args.tune, args.trials)
