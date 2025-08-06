@@ -27,7 +27,8 @@ def auto_scheduler_tune(network_arg, dtype, target, tune, trials):
     if(tune):
         for task in tasks:
             log_file = os.path.join(
-                args.logdir, "autoscheduler", str(target.kind), str(network_arg) + str(task.workload_key) + ".json"
+                #args.logdir, "autoscheduler", str(target.kind), str(network_arg["network"]) + ".json"
+                args.logdir, "autoscheduler", str(target.kind), str(network_arg["network"]) + str(task.workload_key) + ".json"
             )
             
             os.makedirs(os.path.dirname(log_file), exist_ok=True)
@@ -53,7 +54,10 @@ def auto_scheduler_tune(network_arg, dtype, target, tune, trials):
 
             # Run auto-tuning (search)
             start = time.time()
-            task.tune(tuning_opt)
+            task.tune(
+                    tuning_opt,
+                    subgraph_cache="/home/thais.camacho/tvm/src/auto_cache/params.yaml"
+            )
             end = time.time()
             print("task tune: ", str(task.workload_key), end - start)
 
@@ -100,3 +104,4 @@ if __name__ == "__main__":
             print("Tune %s ..." % network_arg)
 
             auto_scheduler_tune(network_arg, args.dtype, target, args.tune, args.trials)
+
