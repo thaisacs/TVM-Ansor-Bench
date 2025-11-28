@@ -1,0 +1,653 @@
+-----------------------------------
+fused_nn_dense_add
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["08f7449d79e570b7274174709e5e5e01", [1, 2048], [1000, 2048], [1, 1000], [1, 1000]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 2048]
+p1 = PLACEHOLDER [1000, 2048]
+T_matmul_NT(i0, i1) += (p0[i0, k]*p1[i1, k])
+p2 = PLACEHOLDER [1, 1000]
+T_add(ax0, ax1) = (T_matmul_NT[ax0, ax1] + p2[ax0, ax1])
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["c65219288fed42bc0c3a7357b7b4e370", [1, 3, 224, 224], [64, 3, 7, 7], [1, 64, 112, 112]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 3, 224, 224]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*3) + vc), h, w]
+data_pad(i0, i1, i2, i3, i4) = tir.if_then_else(((((i2 >= 3) && (i2 < 227)) && (i3 >= 3)) && (i3 < 227)), data_vec[i0, i1, (i2 - 3), (i3 - 3), i4], 0f)
+p1 = PLACEHOLDER [64, 3, 7, 7]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*32) + ocb), ((icc*3) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_pad[n, floordiv(ic, 3), ((oh*2) + kh), ((ow*2) + kw), floormod(ic, 3)]*kernel_vec[oc_chunk, floordiv(ic, 3), kh, kw, floormod(ic, 3), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 32), h, w, floormod(c, 32)]
+
+-----------------------------------
+tvmgen_default_fused_nn_max_pool2d
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["6e0b9382e8e79abd1ba58adccf7ae0f6", [1, 64, 112, 112], [1, 64, 56, 56]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 64, 112, 112]
+pad_temp(ax0, ax1, ax2, ax3) = tir.if_then_else(((((ax2 >= 1) && (ax2 < 113)) && (ax3 >= 1)) && (ax3 < 113)), p0[ax0, ax1, (ax2 - 1), (ax3 - 1)], -3.40282e+38f)
+pool_max(ax0, ax1, ax2, ax3) max= pad_temp[ax0, ax1, ((ax2*2) + rv0), ((ax3*2) + rv1)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_1
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["4bc3a0596febc33e1b64dda7afdc0e18", [1, 64, 56, 56], [64, 64, 1, 1], [1, 64, 56, 56]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 64, 56, 56]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*16) + vc), h, w]
+p1 = PLACEHOLDER [64, 64, 1, 1]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*16) + ocb), ((icc*16) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_vec[n, floordiv(ic, 16), (oh + kh), (ow + kw), floormod(ic, 16)]*kernel_vec[oc_chunk, floordiv(ic, 16), kh, kw, floormod(ic, 16), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 16), h, w, floormod(c, 16)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_2
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["e1228d94d722921f679829d70b3ae6c0", [1, 64, 56, 56], [64, 64, 3, 3], [1, 64, 56, 56]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 64, 56, 56]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*64) + vc), h, w]
+data_pad(i0, i1, i2, i3, i4) = tir.if_then_else(((((i2 >= 1) && (i2 < 57)) && (i3 >= 1)) && (i3 < 57)), data_vec[i0, i1, (i2 - 1), (i3 - 1), i4], 0f)
+p1 = PLACEHOLDER [64, 64, 3, 3]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*32) + ocb), ((icc*64) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_pad[n, floordiv(ic, 64), (oh + kh), (ow + kw), floormod(ic, 64)]*kernel_vec[oc_chunk, floordiv(ic, 64), kh, kw, floormod(ic, 64), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 32), h, w, floormod(c, 32)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_3
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["af7c0eb184058deec8d2ddd1a5db2e61", [1, 64, 56, 56], [256, 64, 1, 1], [1, 256, 56, 56]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 64, 56, 56]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*4) + vc), h, w]
+p1 = PLACEHOLDER [256, 64, 1, 1]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*32) + ocb), ((icc*4) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_vec[n, floordiv(ic, 4), (oh + kh), (ow + kw), floormod(ic, 4)]*kernel_vec[oc_chunk, floordiv(ic, 4), kh, kw, floormod(ic, 4), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 32), h, w, floormod(c, 32)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_4
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["7a31438b80feefdae628daab53a99e4d", [1, 256, 56, 56], [64, 256, 1, 1], [1, 64, 56, 56]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 256, 56, 56]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*256) + vc), h, w]
+p1 = PLACEHOLDER [64, 256, 1, 1]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*32) + ocb), ((icc*256) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_vec[n, floordiv(ic, 256), (oh + kh), (ow + kw), floormod(ic, 256)]*kernel_vec[oc_chunk, floordiv(ic, 256), kh, kw, floormod(ic, 256), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 32), h, w, floormod(c, 32)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_5
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["0eac4342db79beb9a5955cd7934249b2", [1, 256, 56, 56], [128, 256, 1, 1], [1, 128, 56, 56]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 256, 56, 56]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*4) + vc), h, w]
+p1 = PLACEHOLDER [128, 256, 1, 1]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*4) + ocb), ((icc*4) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_vec[n, floordiv(ic, 4), (oh + kh), (ow + kw), floormod(ic, 4)]*kernel_vec[oc_chunk, floordiv(ic, 4), kh, kw, floormod(ic, 4), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 4), h, w, floormod(c, 4)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_6
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["dd2adc1b0af50944871cdbb1861a374a", [1, 128, 56, 56], [128, 128, 3, 3], [1, 128, 28, 28]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 128, 56, 56]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*4) + vc), h, w]
+data_pad(i0, i1, i2, i3, i4) = tir.if_then_else(((((i2 >= 1) && (i2 < 57)) && (i3 >= 1)) && (i3 < 57)), data_vec[i0, i1, (i2 - 1), (i3 - 1), i4], 0f)
+p1 = PLACEHOLDER [128, 128, 3, 3]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*4) + ocb), ((icc*4) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_pad[n, floordiv(ic, 4), ((oh*2) + kh), ((ow*2) + kw), floormod(ic, 4)]*kernel_vec[oc_chunk, floordiv(ic, 4), kh, kw, floormod(ic, 4), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 4), h, w, floormod(c, 4)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_7
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["af7c0eb184058deec8d2ddd1a5db2e61", [1, 128, 28, 28], [512, 128, 1, 1], [1, 512, 28, 28]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 128, 28, 28]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*4) + vc), h, w]
+p1 = PLACEHOLDER [512, 128, 1, 1]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*32) + ocb), ((icc*4) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_vec[n, floordiv(ic, 4), (oh + kh), (ow + kw), floormod(ic, 4)]*kernel_vec[oc_chunk, floordiv(ic, 4), kh, kw, floormod(ic, 4), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 32), h, w, floormod(c, 32)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_8
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["4f10376ebdaaf77692e2792ba7ba94bf", [1, 256, 56, 56], [512, 256, 1, 1], [1, 512, 28, 28]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 256, 56, 56]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*256) + vc), h, w]
+p1 = PLACEHOLDER [512, 256, 1, 1]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*64) + ocb), ((icc*256) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_vec[n, floordiv(ic, 256), ((oh*2) + kh), ((ow*2) + kw), floormod(ic, 256)]*kernel_vec[oc_chunk, floordiv(ic, 256), kh, kw, floormod(ic, 256), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 64), h, w, floormod(c, 64)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_9
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["86445fcab819e209518a8b9ee04ca739", [1, 512, 28, 28], [128, 512, 1, 1], [1, 128, 28, 28]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 512, 28, 28]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*512) + vc), h, w]
+p1 = PLACEHOLDER [128, 512, 1, 1]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*64) + ocb), ((icc*512) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_vec[n, floordiv(ic, 512), (oh + kh), (ow + kw), floormod(ic, 512)]*kernel_vec[oc_chunk, floordiv(ic, 512), kh, kw, floormod(ic, 512), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 64), h, w, floormod(c, 64)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_10
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["aa1c4741c3b13ae2a934c5e2f6334ea1", [1, 128, 28, 28], [128, 128, 3, 3], [1, 128, 28, 28]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 128, 28, 28]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*128) + vc), h, w]
+data_pad(i0, i1, i2, i3, i4) = tir.if_then_else(((((i2 >= 1) && (i2 < 29)) && (i3 >= 1)) && (i3 < 29)), data_vec[i0, i1, (i2 - 1), (i3 - 1), i4], 0f)
+p1 = PLACEHOLDER [128, 128, 3, 3]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*32) + ocb), ((icc*128) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_pad[n, floordiv(ic, 128), (oh + kh), (ow + kw), floormod(ic, 128)]*kernel_vec[oc_chunk, floordiv(ic, 128), kh, kw, floormod(ic, 128), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 32), h, w, floormod(c, 32)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_11
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["0eac4342db79beb9a5955cd7934249b2", [1, 512, 28, 28], [256, 512, 1, 1], [1, 256, 28, 28]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 512, 28, 28]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*4) + vc), h, w]
+p1 = PLACEHOLDER [256, 512, 1, 1]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*4) + ocb), ((icc*4) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_vec[n, floordiv(ic, 4), (oh + kh), (ow + kw), floormod(ic, 4)]*kernel_vec[oc_chunk, floordiv(ic, 4), kh, kw, floormod(ic, 4), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 4), h, w, floormod(c, 4)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_12
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["dd2adc1b0af50944871cdbb1861a374a", [1, 256, 28, 28], [256, 256, 3, 3], [1, 256, 14, 14]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 256, 28, 28]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*4) + vc), h, w]
+data_pad(i0, i1, i2, i3, i4) = tir.if_then_else(((((i2 >= 1) && (i2 < 29)) && (i3 >= 1)) && (i3 < 29)), data_vec[i0, i1, (i2 - 1), (i3 - 1), i4], 0f)
+p1 = PLACEHOLDER [256, 256, 3, 3]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*4) + ocb), ((icc*4) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_pad[n, floordiv(ic, 4), ((oh*2) + kh), ((ow*2) + kw), floormod(ic, 4)]*kernel_vec[oc_chunk, floordiv(ic, 4), kh, kw, floormod(ic, 4), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 4), h, w, floormod(c, 4)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_13
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["4f2e0603bc61f2b5aa527ca34381ced2", [1, 256, 14, 14], [1024, 256, 1, 1], [1, 1024, 14, 14]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 256, 14, 14]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*256) + vc), h, w]
+p1 = PLACEHOLDER [1024, 256, 1, 1]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*64) + ocb), ((icc*256) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_vec[n, floordiv(ic, 256), (oh + kh), (ow + kw), floormod(ic, 256)]*kernel_vec[oc_chunk, floordiv(ic, 256), kh, kw, floormod(ic, 256), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 64), h, w, floormod(c, 64)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_14
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["45ef25583f2decd5e5018737cf4d7d58", [1, 512, 28, 28], [1024, 512, 1, 1], [1, 1024, 14, 14]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 512, 28, 28]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*512) + vc), h, w]
+p1 = PLACEHOLDER [1024, 512, 1, 1]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*64) + ocb), ((icc*512) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_vec[n, floordiv(ic, 512), ((oh*2) + kh), ((ow*2) + kw), floormod(ic, 512)]*kernel_vec[oc_chunk, floordiv(ic, 512), kh, kw, floormod(ic, 512), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 64), h, w, floormod(c, 64)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_15
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["86445fcab819e209518a8b9ee04ca739", [1, 1024, 14, 14], [256, 1024, 1, 1], [1, 256, 14, 14]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 1024, 14, 14]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*512) + vc), h, w]
+p1 = PLACEHOLDER [256, 1024, 1, 1]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*64) + ocb), ((icc*512) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_vec[n, floordiv(ic, 512), (oh + kh), (ow + kw), floormod(ic, 512)]*kernel_vec[oc_chunk, floordiv(ic, 512), kh, kw, floormod(ic, 512), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 64), h, w, floormod(c, 64)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_16
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["c4673b97be25605a7f3dc1602fbc2f34", [1, 256, 14, 14], [256, 256, 3, 3], [1, 256, 14, 14]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 256, 14, 14]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*128) + vc), h, w]
+data_pad(i0, i1, i2, i3, i4) = tir.if_then_else(((((i2 >= 1) && (i2 < 15)) && (i3 >= 1)) && (i3 < 15)), data_vec[i0, i1, (i2 - 1), (i3 - 1), i4], 0f)
+p1 = PLACEHOLDER [256, 256, 3, 3]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*16) + ocb), ((icc*128) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_pad[n, floordiv(ic, 128), (oh + kh), (ow + kw), floormod(ic, 128)]*kernel_vec[oc_chunk, floordiv(ic, 128), kh, kw, floormod(ic, 128), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 16), h, w, floormod(c, 16)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_17
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["0eac4342db79beb9a5955cd7934249b2", [1, 1024, 14, 14], [512, 1024, 1, 1], [1, 512, 14, 14]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 1024, 14, 14]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*4) + vc), h, w]
+p1 = PLACEHOLDER [512, 1024, 1, 1]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*4) + ocb), ((icc*4) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_vec[n, floordiv(ic, 4), (oh + kh), (ow + kw), floormod(ic, 4)]*kernel_vec[oc_chunk, floordiv(ic, 4), kh, kw, floormod(ic, 4), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 4), h, w, floormod(c, 4)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_18
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["dd2adc1b0af50944871cdbb1861a374a", [1, 512, 14, 14], [512, 512, 3, 3], [1, 512, 7, 7]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 512, 14, 14]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*4) + vc), h, w]
+data_pad(i0, i1, i2, i3, i4) = tir.if_then_else(((((i2 >= 1) && (i2 < 15)) && (i3 >= 1)) && (i3 < 15)), data_vec[i0, i1, (i2 - 1), (i3 - 1), i4], 0f)
+p1 = PLACEHOLDER [512, 512, 3, 3]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*4) + ocb), ((icc*4) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_pad[n, floordiv(ic, 4), ((oh*2) + kh), ((ow*2) + kw), floormod(ic, 4)]*kernel_vec[oc_chunk, floordiv(ic, 4), kh, kw, floormod(ic, 4), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 4), h, w, floormod(c, 4)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_19
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["af7c0eb184058deec8d2ddd1a5db2e61", [1, 512, 7, 7], [2048, 512, 1, 1], [1, 2048, 7, 7]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 512, 7, 7]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*4) + vc), h, w]
+p1 = PLACEHOLDER [2048, 512, 1, 1]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*32) + ocb), ((icc*4) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_vec[n, floordiv(ic, 4), (oh + kh), (ow + kw), floormod(ic, 4)]*kernel_vec[oc_chunk, floordiv(ic, 4), kh, kw, floormod(ic, 4), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 32), h, w, floormod(c, 32)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_20
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["a976acfb7e2d9037e54533863f834111", [1, 1024, 14, 14], [2048, 1024, 1, 1], [1, 2048, 7, 7]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 1024, 14, 14]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*1024) + vc), h, w]
+p1 = PLACEHOLDER [2048, 1024, 1, 1]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*32) + ocb), ((icc*1024) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_vec[n, floordiv(ic, 1024), ((oh*2) + kh), ((ow*2) + kw), floormod(ic, 1024)]*kernel_vec[oc_chunk, floordiv(ic, 1024), kh, kw, floormod(ic, 1024), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 32), h, w, floormod(c, 32)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_21
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["af7c0eb184058deec8d2ddd1a5db2e61", [1, 2048, 7, 7], [512, 2048, 1, 1], [1, 512, 7, 7]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 2048, 7, 7]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*4) + vc), h, w]
+p1 = PLACEHOLDER [512, 2048, 1, 1]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*32) + ocb), ((icc*4) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_vec[n, floordiv(ic, 4), (oh + kh), (ow + kw), floormod(ic, 4)]*kernel_vec[oc_chunk, floordiv(ic, 4), kh, kw, floormod(ic, 4), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 32), h, w, floormod(c, 32)]
+
+-----------------------------------
+tvmgen_default_fused_nn_conv2d_22
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["2cbf9b8d64cedd7454daa60bdfc35cf8", [1, 512, 7, 7], [512, 512, 3, 3], [1, 512, 7, 7]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 512, 7, 7]
+data_vec(bs, c, h, w, vc) = p0[bs, ((c*512) + vc), h, w]
+data_pad(i0, i1, i2, i3, i4) = tir.if_then_else(((((i2 >= 1) && (i2 < 8)) && (i3 >= 1)) && (i3 < 8)), data_vec[i0, i1, (i2 - 1), (i3 - 1), i4], 0f)
+p1 = PLACEHOLDER [512, 512, 3, 3]
+kernel_vec(occ, icc, k_h, k_w, icb, ocb) = p1[((occ*32) + ocb), ((icc*512) + icb), k_h, k_w]
+conv2d_NCHWc(n, oc_chunk, oh, ow, oc_block) += (data_pad[n, floordiv(ic, 512), (oh + kh), (ow + kw), floormod(ic, 512)]*kernel_vec[oc_chunk, floordiv(ic, 512), kh, kw, floormod(ic, 512), oc_block])
+output_unpack(n, c, h, w) = conv2d_NCHWc[n, floordiv(c, 32), h, w, floormod(c, 32)]
+
+-----------------------------------
+tvmgen_default_fused_nn_global_avg_pool2d
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["da640b59f7f83066caed1c4a23175a18", [1, 2048, 7, 7], [1, 2048, 1, 1]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 2048, 7, 7]
+adaptive_pool_sum(ax0, ax1, ax2, ax3) += p0[ax0, ax1, ((ax2*7) + rv0), ((ax3*7) + rv1)]
+adaptive_pool_avg(ax0, ax1, ax2, ax3) = (adaptive_pool_sum[ax0, ax1, ax2, ax3]/(float32((select((bool)1, ((ax2 + 1)*7), (((ax2 + 1)*7) + 1)) - (ax2*7)))*float32((select((bool)1, ((ax3 + 1)*7), (((ax3 + 1)*7) + 1)) - (ax3*7)))))
+
+-----------------------------------
+tvmgen_default_fused_nn_dense
+Cannot find tuned schedules for target=llvm -keys=cpu -mtriple=x86_64-conda-linux-gnu, workload_key=["a601c6375393779317910dc2f89a7efc", [1, 2048], [1000, 2048], [1, 1000]]. A fallback TOPI schedule is used, which may bring great performance regression or even compilation failure. Compute DAG info:
+p0 = PLACEHOLDER [1, 2048]
+p1 = PLACEHOLDER [1000, 2048]
+T_matmul_NT(i0, i1) += (p0[i0, k]*p1[i1, k])
+
+/home/thais.camacho/benchs/exp1/TVMBench/tmp_logs/autoscheduler/llvm/search_space_model_1000/end-to-end-original-results/original-results-04/resnet_152/resnet_152.json
+#new_experiment
+resnet_152
+TVM04
+Compile...
+tensor([[[[-9.5256e-01, -2.6367e-01,  4.9123e-02,  ...,  4.0575e-01,
+           -2.0894e+00, -9.7998e-01],
+          [-4.3447e-01, -2.3595e-01, -1.0596e+00,  ...,  2.2733e+00,
+           -3.8970e-01, -1.5204e+00],
+          [ 1.9983e-01, -1.9319e+00,  6.7919e-01,  ..., -2.7113e-01,
+            2.1085e+00, -9.1626e-01],
+          ...,
+          [ 8.2577e-01,  6.4260e-01,  2.6105e+00,  ...,  1.8098e+00,
+            7.1804e-01,  4.5137e-01],
+          [-1.7908e+00,  1.4270e+00, -5.6054e-01,  ..., -6.6474e-01,
+            1.8863e-01,  1.0402e+00],
+          [-1.0959e+00, -1.0963e+00,  1.8628e+00,  ...,  1.4962e+00,
+           -7.6998e-01,  6.2840e-02]],
+
+         [[ 1.6011e-01,  5.3165e-01, -4.5685e-01,  ...,  1.5862e+00,
+           -1.1183e+00, -1.0240e+00],
+          [ 9.5378e-01,  3.3220e-01, -8.4592e-01,  ..., -1.5896e+00,
+           -4.3873e-01, -2.2719e+00],
+          [-1.1017e+00, -6.1467e-01,  1.0698e+00,  ..., -2.2965e-01,
+           -1.8787e-01, -1.7594e-01],
+          ...,
+          [ 8.2564e-02,  8.2847e-01,  1.1736e+00,  ..., -2.2659e-01,
+           -9.3237e-01, -1.2068e-01],
+          [ 1.5366e+00,  3.3632e-01, -1.7765e+00,  ..., -1.3802e-01,
+           -1.9453e+00, -9.8510e-01],
+          [ 9.4383e-01,  4.7840e-01, -4.9720e-02,  ...,  1.6701e+00,
+           -7.5234e-01, -2.1368e-01]],
+
+         [[ 1.1287e+00, -8.6607e-01,  1.5160e+00,  ...,  5.9821e-01,
+            3.1546e-01, -8.4948e-01],
+          [-2.7300e-04, -1.5322e+00, -1.4132e+00,  ...,  3.5323e-01,
+            1.6612e+00,  1.5551e+00],
+          [ 6.6947e-02,  8.5382e-01, -1.5084e-01,  ...,  1.2017e+00,
+           -1.1111e+00,  3.2448e-01],
+          ...,
+          [ 1.4756e-01, -5.9714e-01, -1.2156e+00,  ..., -3.1613e-01,
+            1.5436e+00,  4.2244e-01],
+          [-4.3888e-01,  6.9189e-01,  6.7058e-01,  ..., -1.1740e+00,
+           -6.5299e-01, -1.4787e+00],
+          [-4.5723e-01, -1.7968e-01,  2.6585e-01,  ..., -2.0194e-01,
+           -1.0959e+00,  1.1548e+00]]]])
+Evaluate inference time cost...
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  64.1548      64.5352      64.6822      62.1040       0.7886                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  66.4115      66.1948      68.1146      64.7542       1.4176                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  67.6258      67.5552      68.1541      67.4428       0.2087                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  65.0623      64.5287      68.0498      63.0150       1.5731                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  65.0221      65.1199      65.6928      64.3833       0.4387                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  65.2845      65.1070      67.2433      64.7216       0.6939                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  63.8831      64.7252      65.3201      61.1146       1.4868                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  61.2531      61.2020      61.5967      60.9919       0.1869                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  65.0091      64.6822      67.2099      64.3687       0.7955                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  64.7624      64.7311      65.1532      64.4487       0.2196                  
+/home/thais.camacho/benchs/exp1/TVMBench/tmp_logs/autoscheduler/llvm/search_space_model_1000/end-to-end-original-results/original-results-03/resnet_152/resnet_152.json
+#new_experiment
+resnet_152
+TVM03
+Compile...
+tensor([[[[-9.5256e-01, -2.6367e-01,  4.9123e-02,  ...,  4.0575e-01,
+           -2.0894e+00, -9.7998e-01],
+          [-4.3447e-01, -2.3595e-01, -1.0596e+00,  ...,  2.2733e+00,
+           -3.8970e-01, -1.5204e+00],
+          [ 1.9983e-01, -1.9319e+00,  6.7919e-01,  ..., -2.7113e-01,
+            2.1085e+00, -9.1626e-01],
+          ...,
+          [ 8.2577e-01,  6.4260e-01,  2.6105e+00,  ...,  1.8098e+00,
+            7.1804e-01,  4.5137e-01],
+          [-1.7908e+00,  1.4270e+00, -5.6054e-01,  ..., -6.6474e-01,
+            1.8863e-01,  1.0402e+00],
+          [-1.0959e+00, -1.0963e+00,  1.8628e+00,  ...,  1.4962e+00,
+           -7.6998e-01,  6.2840e-02]],
+
+         [[ 1.6011e-01,  5.3165e-01, -4.5685e-01,  ...,  1.5862e+00,
+           -1.1183e+00, -1.0240e+00],
+          [ 9.5378e-01,  3.3220e-01, -8.4592e-01,  ..., -1.5896e+00,
+           -4.3873e-01, -2.2719e+00],
+          [-1.1017e+00, -6.1467e-01,  1.0698e+00,  ..., -2.2965e-01,
+           -1.8787e-01, -1.7594e-01],
+          ...,
+          [ 8.2564e-02,  8.2847e-01,  1.1736e+00,  ..., -2.2659e-01,
+           -9.3237e-01, -1.2068e-01],
+          [ 1.5366e+00,  3.3632e-01, -1.7765e+00,  ..., -1.3802e-01,
+           -1.9453e+00, -9.8510e-01],
+          [ 9.4383e-01,  4.7840e-01, -4.9720e-02,  ...,  1.6701e+00,
+           -7.5234e-01, -2.1368e-01]],
+
+         [[ 1.1287e+00, -8.6607e-01,  1.5160e+00,  ...,  5.9821e-01,
+            3.1546e-01, -8.4948e-01],
+          [-2.7300e-04, -1.5322e+00, -1.4132e+00,  ...,  3.5323e-01,
+            1.6612e+00,  1.5551e+00],
+          [ 6.6947e-02,  8.5382e-01, -1.5084e-01,  ...,  1.2017e+00,
+           -1.1111e+00,  3.2448e-01],
+          ...,
+          [ 1.4756e-01, -5.9714e-01, -1.2156e+00,  ..., -3.1613e-01,
+            1.5436e+00,  4.2244e-01],
+          [-4.3888e-01,  6.9189e-01,  6.7058e-01,  ..., -1.1740e+00,
+           -6.5299e-01, -1.4787e+00],
+          [-4.5723e-01, -1.7968e-01,  2.6585e-01,  ..., -2.0194e-01,
+           -1.0959e+00,  1.1548e+00]]]])
+Evaluate inference time cost...
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  66.1800      66.1635      68.3531      64.3053       1.2538                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  65.7805      65.6492      66.6106      65.0455       0.5544                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  66.4815      66.5626      66.8627      65.6332       0.3327                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  67.3976      67.1609      69.4762      66.9128       0.7277                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  66.8369      66.4950      67.6268      66.3139       0.5453                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  66.0935      66.0064      68.1998      65.0124       0.8532                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  66.9623      66.8968      67.6346      66.7683       0.2420                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  67.0527      66.8298      69.1957      66.5144       0.7355                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  70.0306      70.3139      71.2077      66.8920       1.0956                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  69.8263      70.0811      72.2346      66.3369       1.4070                  
+/home/thais.camacho/benchs/exp1/TVMBench/tmp_logs/autoscheduler/llvm/search_space_model_1000/end-to-end-original-results/original-results-05/resnet_152/resnet_152.json
+#new_experiment
+resnet_152
+TVM05
+Compile...
+tensor([[[[-9.5256e-01, -2.6367e-01,  4.9123e-02,  ...,  4.0575e-01,
+           -2.0894e+00, -9.7998e-01],
+          [-4.3447e-01, -2.3595e-01, -1.0596e+00,  ...,  2.2733e+00,
+           -3.8970e-01, -1.5204e+00],
+          [ 1.9983e-01, -1.9319e+00,  6.7919e-01,  ..., -2.7113e-01,
+            2.1085e+00, -9.1626e-01],
+          ...,
+          [ 8.2577e-01,  6.4260e-01,  2.6105e+00,  ...,  1.8098e+00,
+            7.1804e-01,  4.5137e-01],
+          [-1.7908e+00,  1.4270e+00, -5.6054e-01,  ..., -6.6474e-01,
+            1.8863e-01,  1.0402e+00],
+          [-1.0959e+00, -1.0963e+00,  1.8628e+00,  ...,  1.4962e+00,
+           -7.6998e-01,  6.2840e-02]],
+
+         [[ 1.6011e-01,  5.3165e-01, -4.5685e-01,  ...,  1.5862e+00,
+           -1.1183e+00, -1.0240e+00],
+          [ 9.5378e-01,  3.3220e-01, -8.4592e-01,  ..., -1.5896e+00,
+           -4.3873e-01, -2.2719e+00],
+          [-1.1017e+00, -6.1467e-01,  1.0698e+00,  ..., -2.2965e-01,
+           -1.8787e-01, -1.7594e-01],
+          ...,
+          [ 8.2564e-02,  8.2847e-01,  1.1736e+00,  ..., -2.2659e-01,
+           -9.3237e-01, -1.2068e-01],
+          [ 1.5366e+00,  3.3632e-01, -1.7765e+00,  ..., -1.3802e-01,
+           -1.9453e+00, -9.8510e-01],
+          [ 9.4383e-01,  4.7840e-01, -4.9720e-02,  ...,  1.6701e+00,
+           -7.5234e-01, -2.1368e-01]],
+
+         [[ 1.1287e+00, -8.6607e-01,  1.5160e+00,  ...,  5.9821e-01,
+            3.1546e-01, -8.4948e-01],
+          [-2.7300e-04, -1.5322e+00, -1.4132e+00,  ...,  3.5323e-01,
+            1.6612e+00,  1.5551e+00],
+          [ 6.6947e-02,  8.5382e-01, -1.5084e-01,  ...,  1.2017e+00,
+           -1.1111e+00,  3.2448e-01],
+          ...,
+          [ 1.4756e-01, -5.9714e-01, -1.2156e+00,  ..., -3.1613e-01,
+            1.5436e+00,  4.2244e-01],
+          [-4.3888e-01,  6.9189e-01,  6.7058e-01,  ..., -1.1740e+00,
+           -6.5299e-01, -1.4787e+00],
+          [-4.5723e-01, -1.7968e-01,  2.6585e-01,  ..., -2.0194e-01,
+           -1.0959e+00,  1.1548e+00]]]])
+Evaluate inference time cost...
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  64.4763      64.5076      67.4058      62.1151       1.4293                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  64.8025      64.8438      65.3133      64.2871       0.3286                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  65.7274      65.5510      67.7819      64.8219       0.8085                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  67.2981      67.2657      67.6750      66.9511       0.2300                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  66.9792      67.1949      67.9127      64.4826       0.8854                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  61.6458      61.7095      62.0937      61.0606       0.3353                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  61.7096      61.7409      62.1473      61.1889       0.2681                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  62.2409      61.7490      64.9808      61.2432       1.2437                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  65.7530      65.7058      66.4174      65.1359       0.4001                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  65.8025      65.5208      68.4108      65.2179       0.8932                  
+/home/thais.camacho/benchs/exp1/TVMBench/tmp_logs/autoscheduler/llvm/search_space_model_1000/end-to-end-original-results/original-results-01/resnet_152/resnet_152.json
+#new_experiment
+resnet_152
+TVM01
+Compile...
+tensor([[[[-9.5256e-01, -2.6367e-01,  4.9123e-02,  ...,  4.0575e-01,
+           -2.0894e+00, -9.7998e-01],
+          [-4.3447e-01, -2.3595e-01, -1.0596e+00,  ...,  2.2733e+00,
+           -3.8970e-01, -1.5204e+00],
+          [ 1.9983e-01, -1.9319e+00,  6.7919e-01,  ..., -2.7113e-01,
+            2.1085e+00, -9.1626e-01],
+          ...,
+          [ 8.2577e-01,  6.4260e-01,  2.6105e+00,  ...,  1.8098e+00,
+            7.1804e-01,  4.5137e-01],
+          [-1.7908e+00,  1.4270e+00, -5.6054e-01,  ..., -6.6474e-01,
+            1.8863e-01,  1.0402e+00],
+          [-1.0959e+00, -1.0963e+00,  1.8628e+00,  ...,  1.4962e+00,
+           -7.6998e-01,  6.2840e-02]],
+
+         [[ 1.6011e-01,  5.3165e-01, -4.5685e-01,  ...,  1.5862e+00,
+           -1.1183e+00, -1.0240e+00],
+          [ 9.5378e-01,  3.3220e-01, -8.4592e-01,  ..., -1.5896e+00,
+           -4.3873e-01, -2.2719e+00],
+          [-1.1017e+00, -6.1467e-01,  1.0698e+00,  ..., -2.2965e-01,
+           -1.8787e-01, -1.7594e-01],
+          ...,
+          [ 8.2564e-02,  8.2847e-01,  1.1736e+00,  ..., -2.2659e-01,
+           -9.3237e-01, -1.2068e-01],
+          [ 1.5366e+00,  3.3632e-01, -1.7765e+00,  ..., -1.3802e-01,
+           -1.9453e+00, -9.8510e-01],
+          [ 9.4383e-01,  4.7840e-01, -4.9720e-02,  ...,  1.6701e+00,
+           -7.5234e-01, -2.1368e-01]],
+
+         [[ 1.1287e+00, -8.6607e-01,  1.5160e+00,  ...,  5.9821e-01,
+            3.1546e-01, -8.4948e-01],
+          [-2.7300e-04, -1.5322e+00, -1.4132e+00,  ...,  3.5323e-01,
+            1.6612e+00,  1.5551e+00],
+          [ 6.6947e-02,  8.5382e-01, -1.5084e-01,  ...,  1.2017e+00,
+           -1.1111e+00,  3.2448e-01],
+          ...,
+          [ 1.4756e-01, -5.9714e-01, -1.2156e+00,  ..., -3.1613e-01,
+            1.5436e+00,  4.2244e-01],
+          [-4.3888e-01,  6.9189e-01,  6.7058e-01,  ..., -1.1740e+00,
+           -6.5299e-01, -1.4787e+00],
+          [-4.5723e-01, -1.7968e-01,  2.6585e-01,  ..., -2.0194e-01,
+           -1.0959e+00,  1.1548e+00]]]])
+Evaluate inference time cost...
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  64.2916      64.2497      66.3582      62.8060       0.9386                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  63.9812      63.9228      64.8936      63.1880       0.5718                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  64.1037      63.6226      67.5289      63.1653       1.2420                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  64.7450      64.8251      65.3920      63.6389       0.5571                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  64.1564      63.8185      66.6246      63.4324       0.8791                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  64.1032      64.2009      65.0232      63.2118       0.5884                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  64.7609      64.6781      65.1215      64.5294       0.2318                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  65.1943      64.8867      66.8851      64.4600       0.7931                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  65.8663      65.6542      67.4797      65.1708       0.6294                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  66.3969      65.4997      70.4088      65.2753       1.7282                  
+/home/thais.camacho/benchs/exp1/TVMBench/tmp_logs/autoscheduler/llvm/search_space_model_1000/end-to-end-original-results/original-results-02/resnet_152/resnet_152.json
+#new_experiment
+resnet_152
+TVM02
+Compile...
+tensor([[[[-9.5256e-01, -2.6367e-01,  4.9123e-02,  ...,  4.0575e-01,
+           -2.0894e+00, -9.7998e-01],
+          [-4.3447e-01, -2.3595e-01, -1.0596e+00,  ...,  2.2733e+00,
+           -3.8970e-01, -1.5204e+00],
+          [ 1.9983e-01, -1.9319e+00,  6.7919e-01,  ..., -2.7113e-01,
+            2.1085e+00, -9.1626e-01],
+          ...,
+          [ 8.2577e-01,  6.4260e-01,  2.6105e+00,  ...,  1.8098e+00,
+            7.1804e-01,  4.5137e-01],
+          [-1.7908e+00,  1.4270e+00, -5.6054e-01,  ..., -6.6474e-01,
+            1.8863e-01,  1.0402e+00],
+          [-1.0959e+00, -1.0963e+00,  1.8628e+00,  ...,  1.4962e+00,
+           -7.6998e-01,  6.2840e-02]],
+
+         [[ 1.6011e-01,  5.3165e-01, -4.5685e-01,  ...,  1.5862e+00,
+           -1.1183e+00, -1.0240e+00],
+          [ 9.5378e-01,  3.3220e-01, -8.4592e-01,  ..., -1.5896e+00,
+           -4.3873e-01, -2.2719e+00],
+          [-1.1017e+00, -6.1467e-01,  1.0698e+00,  ..., -2.2965e-01,
+           -1.8787e-01, -1.7594e-01],
+          ...,
+          [ 8.2564e-02,  8.2847e-01,  1.1736e+00,  ..., -2.2659e-01,
+           -9.3237e-01, -1.2068e-01],
+          [ 1.5366e+00,  3.3632e-01, -1.7765e+00,  ..., -1.3802e-01,
+           -1.9453e+00, -9.8510e-01],
+          [ 9.4383e-01,  4.7840e-01, -4.9720e-02,  ...,  1.6701e+00,
+           -7.5234e-01, -2.1368e-01]],
+
+         [[ 1.1287e+00, -8.6607e-01,  1.5160e+00,  ...,  5.9821e-01,
+            3.1546e-01, -8.4948e-01],
+          [-2.7300e-04, -1.5322e+00, -1.4132e+00,  ...,  3.5323e-01,
+            1.6612e+00,  1.5551e+00],
+          [ 6.6947e-02,  8.5382e-01, -1.5084e-01,  ...,  1.2017e+00,
+           -1.1111e+00,  3.2448e-01],
+          ...,
+          [ 1.4756e-01, -5.9714e-01, -1.2156e+00,  ..., -3.1613e-01,
+            1.5436e+00,  4.2244e-01],
+          [-4.3888e-01,  6.9189e-01,  6.7058e-01,  ..., -1.1740e+00,
+           -6.5299e-01, -1.4787e+00],
+          [-4.5723e-01, -1.7968e-01,  2.6585e-01,  ..., -2.0194e-01,
+           -1.0959e+00,  1.1548e+00]]]])
+Evaluate inference time cost...
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  64.2180      64.3500      65.9692      62.5148       0.9163                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  64.6996      64.7430      65.5235      63.6909       0.5445                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  64.8519      64.8952      67.6251      61.3142       1.5012                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  61.3804      61.2849      61.7994      61.0110       0.2350                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  61.8238      61.8298      62.4914      61.1894       0.3434                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  61.9926      61.8131      64.0089      61.2490       0.7231                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  61.4278      61.4702      61.8865      61.0283       0.2461                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  62.0556      61.8516      64.4595      61.3768       0.8374                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  65.7465      65.4907      68.8351      65.0042       1.0550                  
+Execution time summary:
+ mean (ms)   median (ms)    max (ms)     min (ms)     std (ms)  
+  65.7388      65.4542      68.7284      65.0368       1.0086                  
