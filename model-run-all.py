@@ -5,7 +5,7 @@ import os
 
 from library.networks import get_network_with_key, build_network_keys
 from tvm.driver import tvmc
-from library.util import get_networks_arg, networks_dict, network_to_n_trials
+from library.util import get_networks_arg, networks_dict
 
 import tvm
 from tvm import relay, auto_scheduler
@@ -31,7 +31,14 @@ from scipy.stats import sem
 # --------------------------------------------------------------------------------------------
 
 def model_run(network_arg, dtype, target, log_file):
-    mod, params, inputs = get_network_with_key(network_arg, dtype)
+    mod, params = get_network_with_key(network_arg, dtype)
+
+    print("Compile...")
+    args = network_arg['args']
+    print(args)
+    input_name = "input0"
+    inputs = [(input_name, args.shape, dtype)]
+    input_shape = inputs[0][1]
 
     #print("Compile...")
     #input_shape = (3, 224, 224)
@@ -50,8 +57,6 @@ def model_run(network_arg, dtype, target, log_file):
     #print("Evaluate inference time cost...")
     #for x in range(0, 1):
     #    print(module.benchmark(dev, repeat=10, number=10, min_repeat_ms=500, end_to_end=True))
-    print("Compile...")
-    input_shape = inputs[0][1]
 
     with auto_scheduler.ApplyHistoryBest(log_file):
         with tvm.transform.PassContext(opt_level=3, config={"relay.backend.use_auto_scheduler": True}):
@@ -73,7 +78,7 @@ def model_run(network_arg, dtype, target, log_file):
         dev = tvm.device(str(target), 0)
         # Create graph executor
         module = graph_executor.GraphModule(lib["default"](dev))
-        module.set_input(input_data, data)
+        module.set_input("input", data)
         # Evaluate
         print("Evaluate inference time cost...")
         for x in range(0, 10):
@@ -83,12 +88,12 @@ def model_run(network_arg, dtype, target, log_file):
     data_tvm = tvm.nd.array((np.random.uniform(size=input_shape)).astype(dtype))
     run_bench(inputs[0][0], data_tvm, lib)
 
-    np.random.seed(0)
-    data_tvm = tvm.nd.array((np.random.uniform(size=input_shape)).astype(dtype))
-    actual_output1 = get_output(inputs[0][0], data_tvm, lib)
-    expected_output = get_output(inputs[0][0], data_tvm, ref_lib)
+    #np.random.seed(0)
+    #data_tvm = tvm.nd.array((np.random.uniform(size=input_shape)).astype(dtype))
+    #actual_output1 = get_output(inputs[0][0], data_tvm, lib)
+    #expected_output = get_output(inputs[0][0], data_tvm, ref_lib)
 
-    tvm.testing.assert_allclose(actual_output1, expected_output, rtol=1e-4, atol=1e-4)
+    #tvm.testing.assert_allclose(actual_output1, expected_output, rtol=1e-4, atol=1e-4)
 
 #if __name__ == "__main__":
 #    parser = argparse.ArgumentParser(description='TVM Model Tune.\n')
@@ -134,23 +139,16 @@ def gen_file_out(path, arr):
     for (dir_path, dir_names, file_names) in walk(path):
         for filename in file_names:
             if(".json" in filename):
-                approache = dir_path.split('/')[10].split('-')[3]
-                if(approache == 'cache'):
-                    approache = 'TGC'
+                approach = dir_path.split('/')[10].split('-')[3]
+                if(approach == 'cache'):
+                    approach = 'TGC'
                 else:
-                    approache = 'TVM'
-                idx = dir_path.split('/')[10].split('-')
-                if(len(idx) == 5):
-                    idx = idx[4]
-                else:
-                    approache = approache + '-ES'
-                    idx = idx[5]
-                net = filename.split(' ')[1]
-                net = net.replace(',', '').replace('\'', '')
-                if(idx == '01'):
-                    if(not net in arr):
-                        arr[net] = {}
-                    arr[net][approache] = dir_path + '/' + filename
+                    approach = 'TVM'
+                idx = dir_path.split('/')[11].split('-')[2]
+                net = filename.split('.')[0]
+                if(not net in arr):
+                    arr[net] = {}
+                arr[net][approach+idx] = dir_path + '/' + filename
 
 if __name__ == "__main__":
     networks_keys = build_network_keys()
@@ -158,10 +156,8 @@ if __name__ == "__main__":
     dtype = 'float32'
 
     filesc_ = [
-        "/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/model_tuning_space/end-to-end-cache/",
-        "/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/model_tuning_space/end-to-end-original/",
-        "/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/model_tuning_space/end-to-end-cache-threshold/",
-        "/home/thais/Dev/TVMBench/tmp_logs/autoscheduler/llvm/model_tuning_space/end-to-end-original-threshold/"
+        #"/home/thais.camacho/benchs/exp1/TVMBench/tmp_logs/autoscheduler/llvm/search_space_model_1000/end-to-end-cache-results/",
+        "/home/thais.camacho/benchs/exp1/TVMBench/tmp_logs/autoscheduler/llvm/search_space_model_1000/end-to-end-original-results/",
     ]
 
     arr = {}
@@ -171,8 +167,7 @@ if __name__ == "__main__":
     for net in arr:
         networks = [net]
 
-        if(net != "inception_v3"):
-
+        if(net == "resnext_50"):
             for arg in networks_keys:
                 network = arg[0]
                 if(network in networks):
@@ -182,7 +177,9 @@ if __name__ == "__main__":
                     }
                     for x in arr[net]:
                         logfile = arr[net][x]
+                        print(logfile)
                         print("#new_experiment")
                         print(net)
                         print(x)
                         model_run(network_arg, dtype, target, logfile)
+

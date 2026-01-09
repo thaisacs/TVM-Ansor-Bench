@@ -13,4 +13,4 @@ ggplot(data, aes(x=reorder(name, -value), y=value)) +
   labs(x="Deep Learning Model", y="Hit Ratio (%)")+
   geom_bar(stat = "identity", alpha=.9, color="black")+
   geom_text(aes(label = paste(signif(value, digits = 4), "%")), vjust = 1.6, color='white', size=3)
-  
+
